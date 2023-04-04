@@ -2,6 +2,7 @@ package com.tup.textilapp.config;
 
 import com.tup.textilapp.model.entity.Color;
 import com.tup.textilapp.repository.ColorRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.stereotype.Component;
@@ -12,13 +13,17 @@ import java.util.List;
 @Component
 public class ColorConfig implements CommandLineRunner {
     private final ColorRepository repository;
-
+    @Value("${data.initialized}")
+    private boolean dataInitialized;
     public ColorConfig(ColorRepository repository) {
         this.repository = repository;
     }
 
     @Override
     public void run(String... args) {
+        if (dataInitialized) {
+            return;
+        }
         List<Color> list = new ArrayList<>();
         list.add(new Color(null,"Rojos/Bordós"));
         list.add(new Color(null,"Amarillos/Mostazas"));

@@ -5,6 +5,7 @@ import com.tup.textilapp.model.entity.SubCategory;
 import com.tup.textilapp.repository.CategoryRepository;
 import com.tup.textilapp.repository.SubCategoryRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ public class CategoryConfig implements CommandLineRunner {
     private final CategoryRepository catRepository;
     private final SubCategoryRepository subCatRepository;
 
+    @Value("${data.initialized}")
+    private boolean dataInitialized;
     public CategoryConfig(
             CategoryRepository catRepository,
             SubCategoryRepository subCatRepository
@@ -30,6 +33,9 @@ public class CategoryConfig implements CommandLineRunner {
     @Transactional
     @Override
     public void run(String... args) {
+        if (dataInitialized) {
+            return;
+        }
         List<Category> list = new ArrayList<>();
         list.add(new Category(null, "Cama"));
         list.add(new Category(null, "Baños"));

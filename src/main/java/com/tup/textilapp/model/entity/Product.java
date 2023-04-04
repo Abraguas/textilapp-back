@@ -23,6 +23,8 @@ public class Product {
     private String observations;
     private Integer stock;
     private String measurment;
+    private String image;
+
     @ManyToOne(targetEntity = Brand.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;

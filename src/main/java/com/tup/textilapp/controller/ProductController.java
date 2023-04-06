@@ -30,7 +30,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping(path = "all")
     public List<Product> getAll() {
         return this.productService.getAll();
     }

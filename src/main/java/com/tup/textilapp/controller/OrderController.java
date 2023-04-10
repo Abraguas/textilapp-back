@@ -22,7 +22,13 @@ public class OrderController {
     }
     @PostMapping
     public ResponseEntity<?> registerOrder(@RequestBody OrderDTO orderDTO) {
-        this.orderService.registerOrder(orderDTO);
-        return ResponseEntity.ok("LOL");
+        try {
+            this.orderService.registerOrder(orderDTO);
+            return ResponseEntity.ok("Order registered succesfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

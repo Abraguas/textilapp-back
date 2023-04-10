@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderStateRepository extends JpaRepository<OrderState, Integer> {
-
+    OrderState findByName(String name);
 }

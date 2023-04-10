@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,15 +41,12 @@ public class OrderService {
         if (user.isEmpty()) {
             throw new IllegalArgumentException("Specified user doesn't exist");
         }
-        Optional<OrderState> state = this.orderStateRepository.findById(orderDTO.getState().getId());
-        if (state.isEmpty()) {
-            throw new IllegalArgumentException("Specified state doesn't exist");
-        }
+        OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(
                 null,
                 user.get(),
                 new Date(),
-                state.get(),
+                state,
                 orderDTO.getObservations(),
                 null
         );
@@ -69,5 +67,8 @@ public class OrderService {
             );
 
         }
+    }
+    public List<Order> getAll() {
+        return this.orderRepository.findAll();
     }
 }

@@ -1,6 +1,5 @@
 package com.tup.textilapp.model.dto;
 
-import com.tup.textilapp.model.entity.OrderState;
 import com.tup.textilapp.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,9 +14,6 @@ public class OrderDTO {
 
 
     private UserEntity userEntity;
-
-
-    private OrderState state;
 
     private String observations;
 

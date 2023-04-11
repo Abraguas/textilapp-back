@@ -1,5 +1,6 @@
 package com.tup.textilapp.controller;
 
+import com.tup.textilapp.model.dto.JwtDTO;
 import com.tup.textilapp.model.entity.UserEntity;
 import com.tup.textilapp.service.IJwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private IJwtService jwtService;
+    private final IJwtService jwtService;
 
     @Autowired
     public AuthenticationController(
@@ -45,7 +46,7 @@ public class AuthenticationController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         final String jwt = jwtService.generateToken(userDetails);
 
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(new JwtDTO(jwt));
     }
 }
 

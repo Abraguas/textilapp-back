@@ -3,6 +3,7 @@ package com.tup.textilapp.controller;
 import com.tup.textilapp.model.dto.OrderDTO;
 import com.tup.textilapp.model.entity.Order;
 import com.tup.textilapp.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,10 @@ public class OrderController {
         this.orderService = orderService;
     }
     @PostMapping
-    public ResponseEntity<?> registerOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> registerOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
         try {
-            this.orderService.registerOrder(orderDTO);
+            this.orderService.registerOrder(orderDTO, token);
             return ResponseEntity.ok("Order registered succesfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -19,6 +19,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderStateRepository orderStateRepository;
     private final ProductRepository productRepository;
+    private final JwtService jwtService;
 
     @Autowired
     public OrderService(
@@ -26,25 +27,24 @@ public class OrderService {
             OrderDetailRepository orderDetailRepository,
             UserRepository userRepository,
             OrderStateRepository orderStateRepository,
-            ProductRepository productRepository
+            ProductRepository productRepository,
+            JwtService jwtService
     ) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userRepository = userRepository;
         this.orderStateRepository = orderStateRepository;
         this.productRepository = productRepository;
+        this.jwtService = jwtService;
     }
 
     @Transactional
-    public void registerOrder(OrderDTO orderDTO) {
-        Optional<UserEntity> user = this.userRepository.findById(orderDTO.getUserEntity().getId());
-        if (user.isEmpty()) {
-            throw new IllegalArgumentException("Specified user doesn't exist");
-        }
+    public void registerOrder(OrderDTO orderDTO, String token) {
+        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token));
         OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(
                 null,
-                user.get(),
+                user,
                 new Date(),
                 state,
                 orderDTO.getObservations(),

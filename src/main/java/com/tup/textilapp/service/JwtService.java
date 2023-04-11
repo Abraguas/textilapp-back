@@ -49,7 +49,7 @@ public class JwtService implements IJwtService{
     private String createToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(now.getTime() + 20 * 60 * 1000))// 20 minutos
+                .setExpiration(new Date(now.getTime() + 60 * 60 * 1000))// 1 h
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 

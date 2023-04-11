@@ -4,6 +4,7 @@ import com.tup.textilapp.filter.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,7 +34,12 @@ public class SecurityConfiguration{
                 .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/category").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/product/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.POST,"/category").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/product").hasAuthority("ADMIN")
+                        .requestMatchers("/user/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

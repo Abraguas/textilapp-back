@@ -1,11 +1,13 @@
 package com.tup.textilapp.filter;
 
 import com.tup.textilapp.service.IJwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +42,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if(authorizationHeader != null &&  authorizationHeader.startsWith("Bearer") &&  authorizationHeader.length() > 15) {
             jwt = authorizationHeader.substring(7);
-            username = jwtService.extractUserName(jwt);
+            try {
+                username = jwtService.extractUserName(jwt);
+            } catch (ExpiredJwtException e) {
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+                httpServletResponse.getWriter().write("Token expired");
+                return;
+            } catch (Exception e) {
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+                httpServletResponse.getWriter().write(e.getMessage());
+                return;
+            }
+
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails  = this.userDetailsService.loadUserByUsername(username);

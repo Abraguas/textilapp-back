@@ -1,6 +1,7 @@
 package com.tup.textilapp.controller;
 
 import com.tup.textilapp.model.dto.OrderDTO;
+import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.Order;
 import com.tup.textilapp.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public class OrderController {
         String token = request.getHeader("Authorization").substring(7);
         try {
             this.orderService.registerOrder(orderDTO, token);
-            return ResponseEntity.ok("Order registered succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Order registered succesfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

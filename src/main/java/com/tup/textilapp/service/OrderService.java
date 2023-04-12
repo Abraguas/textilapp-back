@@ -40,6 +40,9 @@ public class OrderService {
 
     @Transactional
     public void registerOrder(OrderDTO orderDTO, String token) {
+        if(orderDTO.getDetails().isEmpty()) {
+            throw new IllegalArgumentException("No details provided");
+        }
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token));
         OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(

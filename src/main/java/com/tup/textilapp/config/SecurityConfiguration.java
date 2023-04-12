@@ -37,6 +37,7 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
                         .requestMatchers(HttpMethod.GET,"/category").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/product/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.POST,"/order").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/category").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/product").hasAuthority("ADMIN")
                         .requestMatchers("/user/register").permitAll()

@@ -24,6 +24,7 @@ public class Product {
     private Integer stock;
     private String measurment;
     private String image;
+    private Boolean isListed;
 
     @ManyToOne(targetEntity = Brand.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_id", referencedColumnName = "id")

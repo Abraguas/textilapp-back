@@ -29,15 +29,63 @@ public class ProductController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+    @PutMapping(path = "unlist/{productId}")
+    public ResponseEntity<?> unlist(@PathVariable Integer productId) {
+        try {
+            this.productService.unlist(productId);
+            return ResponseEntity.ok("Product unlisted succesfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @PutMapping(path = "list/{productId}")
+    public ResponseEntity<?> list(@PathVariable Integer productId) {
+        try {
+            this.productService.list(productId);
+            return ResponseEntity.ok("Product listed succesfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @PutMapping(path = "all/{productId}")
+    public ResponseEntity<?> update(@PathVariable Integer productId,@RequestBody Product product) {
+        try {
+            this.productService.update(productId ,product);
+            return ResponseEntity.ok("Product updated succesfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
     @GetMapping(path = "all")
     public List<Product> getAll() {
         return this.productService.getAll();
     }
-    @GetMapping(path = "{subCategoryId}")
+    @GetMapping(path = "listed")
+    public List<Product> getListed() {
+        return this.productService.getListed();
+    }
+    @GetMapping(path = "all/{subCategoryId}")
     public ResponseEntity<?> getAllBySubCategory(@PathVariable Integer subCategoryId) {
         try {
             List<Product> lst = this.productService.getAllBySubCategory(subCategoryId);
+            return ResponseEntity.ok(lst);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @GetMapping(path = "listed/{subCategoryId}")
+    public ResponseEntity<?> getListedBySubCategory(@PathVariable Integer subCategoryId) {
+        try {
+            List<Product> lst = this.productService.getListedBySubCategory(subCategoryId);
             return ResponseEntity.ok(lst);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

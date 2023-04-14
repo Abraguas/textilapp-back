@@ -41,13 +41,16 @@ public class SecurityConfiguration{
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
                         .requestMatchers(HttpMethod.GET,"/category").hasAnyAuthority("ADMIN", "CLIENT")
-                        .requestMatchers(HttpMethod.GET,"/product/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/product/listed").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/product/listed/**").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/order").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/category").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/product").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/product/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/product/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/product/all").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/product/all/**").hasAuthority("ADMIN")
                         .requestMatchers("/user/register").permitAll()
                         .anyRequest().authenticated()
-
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());

@@ -26,9 +26,9 @@ public class UnitConfig implements CommandLineRunner {
             return;
         }
         List<Unit> list = new ArrayList<>();
-        list.add(new Unit(null, "Metros"));
-        list.add(new Unit(null, "Kilos"));
-        list.add(new Unit(null, "Unidades"));
+        list.add(new Unit(null, "Metro"));
+        list.add(new Unit(null, "Kilo"));
+        list.add(new Unit(null, "Unidad"));
         repository.saveAll(list);
 
     }

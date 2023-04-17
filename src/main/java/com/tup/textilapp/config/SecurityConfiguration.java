@@ -49,7 +49,7 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.PUT,"/product/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/product/all").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/product/all/**").hasAuthority("ADMIN")
-                        .requestMatchers("/user/register").permitAll()
+                        .requestMatchers("/user/client").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

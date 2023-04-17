@@ -43,7 +43,8 @@ public class OrderService {
         if(orderDTO.getDetails().isEmpty()) {
             throw new IllegalArgumentException("No details provided");
         }
-        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token));
+        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
+                .orElseThrow(()-> new IllegalArgumentException("User: '"+ this.jwtService.extractUserName(token) +"' doesn't exist"));
         OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(
                 null,

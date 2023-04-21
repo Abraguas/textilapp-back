@@ -29,9 +29,13 @@ public class OrderController {
             this.orderService.registerOrder(orderDTO, token);
             return ResponseEntity.ok(new ResponseMessageDTO("Order registered succesfully"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.unprocessableEntity().body(new ResponseMessageDTO(e.getMessage()));
+
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
     @GetMapping

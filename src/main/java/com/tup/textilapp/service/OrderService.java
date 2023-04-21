@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -56,16 +55,18 @@ public class OrderService {
         );
         this.orderRepository.save(newOrder);
         for (OrderDetailDTO d : orderDTO.getDetails()) {
-            Optional<Product> product = this.productRepository.findById(d.getProduct().getId());
-            if (product.isEmpty()) {
-                throw new IllegalArgumentException("Specified product doesn't exist");
+            Product product = this.productRepository.findById(d.getProduct().getId())
+                    .orElseThrow(()->new IllegalArgumentException("Specified product doesn't exist"));
+            if(d.getQuantity() > product.getStock()) {
+                throw new IllegalStateException("Not enough '" +product.getName()+"' in stock");
             }
+            product.setStock(product.getStock() - d.getQuantity());
             this.orderDetailRepository.save(
                 new OrderDetail(
                         null,
                         d.getQuantity(),
                         d.getPricePerUnit(),
-                        product.get(),
+                        product,
                         newOrder
                 )
             );

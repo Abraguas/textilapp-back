@@ -156,6 +156,10 @@ public class ProductService {
     public List<Product> getAll() {
         return this.productRepository.findAll();
     }
+    public Product getById(Integer productId) {
+        return this.productRepository.findById(productId)
+                .orElseThrow(()-> new IllegalArgumentException("Product with id " + productId + " doesn't exist"));
+    }
     public List<Product> getListed() {
         return this.productRepository.findAllByIsListed(true);
     }

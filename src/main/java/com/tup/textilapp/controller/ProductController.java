@@ -1,5 +1,6 @@
 package com.tup.textilapp.controller;
 
+import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.Product;
 import com.tup.textilapp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProductController {
     public ResponseEntity<?> register(@RequestBody Product product) {
         try {
             this.productService.save(product);
-            return ResponseEntity.ok("Product created succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Product created succesfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -33,7 +34,7 @@ public class ProductController {
     public ResponseEntity<?> unlist(@PathVariable Integer productId) {
         try {
             this.productService.unlist(productId);
-            return ResponseEntity.ok("Product unlisted succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Product unlisted succesfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -44,25 +45,35 @@ public class ProductController {
     public ResponseEntity<?> list(@PathVariable Integer productId) {
         try {
             this.productService.list(productId);
-            return ResponseEntity.ok("Product listed succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Product listed succesfully"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
-    @PutMapping(path = "all/{productId}")
+    @PutMapping(path = "{productId}")
     public ResponseEntity<?> update(@PathVariable Integer productId,@RequestBody Product product) {
         try {
             this.productService.update(productId ,product);
-            return ResponseEntity.ok("Product updated succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Product updated succesfully"));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+    @GetMapping(path = "{productId}")
+    public ResponseEntity<?> getById(@PathVariable Integer productId) {
+        try {
+            return ResponseEntity.ok(this.productService.getById(productId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
 
+    }
     @GetMapping(path = "all")
     public List<Product> getAll() {
         return this.productService.getAll();
@@ -77,9 +88,9 @@ public class ProductController {
             List<Product> lst = this.productService.getAllBySubCategory(subCategoryId);
             return ResponseEntity.ok(lst);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
     @GetMapping(path = "listed/{subCategoryId}")
@@ -88,9 +99,9 @@ public class ProductController {
             List<Product> lst = this.productService.getListedBySubCategory(subCategoryId);
             return ResponseEntity.ok(lst);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
 }

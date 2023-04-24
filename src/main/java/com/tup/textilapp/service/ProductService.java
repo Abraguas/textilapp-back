@@ -52,7 +52,7 @@ public class ProductService {
                 product.getDescription(),
                 product.getPricePerUnit(),
                 product.getObservations(),
-                product.getStock(),
+                0,
                 product.getMeasurment(),
                 product.getImage(),
                 product.getIsListed(),

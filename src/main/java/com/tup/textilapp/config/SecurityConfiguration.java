@@ -57,6 +57,7 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.GET,"/brand").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/brand").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/brand/**").hasAuthority("ADMIN")
+                        .requestMatchers("/stockMovement").hasAuthority("ADMIN")
                         .requestMatchers("/user/client").permitAll()
                         .anyRequest().authenticated()
                 )

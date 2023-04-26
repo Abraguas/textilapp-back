@@ -1,6 +1,7 @@
 package com.tup.textilapp.service;
 
 import com.tup.textilapp.model.dto.StockMovementDTO;
+import com.tup.textilapp.model.dto.StockMovementProdDTO;
 import com.tup.textilapp.model.entity.OrderDetail;
 import com.tup.textilapp.model.entity.Product;
 import com.tup.textilapp.model.entity.StockMovement;
@@ -66,6 +67,12 @@ public class StockMovementService {
                         productId + "' doesn't exist"));
         return this.stockMovementRepository.findAllByProduct(product).stream().map(
                 (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
+        ).collect(Collectors.toList());
+    }
+    public List<StockMovementProdDTO> getAllMovements() {
+        return this.stockMovementRepository.findAll().stream().map(
+                (StockMovement s) -> new StockMovementProdDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),
+                        s.getObservations(), s.getProduct().getName(), s.getProduct().getUnit().getName())
         ).collect(Collectors.toList());
     }
 }

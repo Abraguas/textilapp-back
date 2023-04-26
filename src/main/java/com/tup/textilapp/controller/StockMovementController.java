@@ -49,4 +49,14 @@ public class StockMovementController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+    @GetMapping
+    public ResponseEntity<?> getAllMovements() {
+        try {
+            return ResponseEntity.ok(this.stockMovementService.getAllMovements());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
 }

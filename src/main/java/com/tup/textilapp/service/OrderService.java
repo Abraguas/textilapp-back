@@ -1,5 +1,6 @@
 package com.tup.textilapp.service;
 
+import com.tup.textilapp.model.dto.GetOrderDTO;
 import com.tup.textilapp.model.dto.OrderDTO;
 import com.tup.textilapp.model.dto.OrderDetailDTO;
 import com.tup.textilapp.model.entity.*;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class OrderService {
@@ -39,11 +42,11 @@ public class OrderService {
 
     @Transactional
     public void registerOrder(OrderDTO orderDTO, String token) {
-        if(orderDTO.getDetails().isEmpty()) {
+        if (orderDTO.getDetails().isEmpty()) {
             throw new IllegalArgumentException("No details provided");
         }
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(()-> new IllegalArgumentException("User: '"+ this.jwtService.extractUserName(token) +"' doesn't exist"));
+                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(
                 null,
@@ -56,24 +59,68 @@ public class OrderService {
         this.orderRepository.save(newOrder);
         for (OrderDetailDTO d : orderDTO.getDetails()) {
             Product product = this.productRepository.findById(d.getProduct().getId())
-                    .orElseThrow(()->new IllegalArgumentException("Specified product doesn't exist"));
-            if(d.getQuantity() > product.getStock()) {
-                throw new IllegalStateException("Not enough '" +product.getName()+"' in stock");
+                    .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
+            if (d.getQuantity() > product.getStock()) {
+                throw new IllegalStateException("Not enough '" + product.getName() + "' in stock");
             }
             product.setStock(product.getStock() - d.getQuantity());
             this.orderDetailRepository.save(
-                new OrderDetail(
-                        null,
-                        d.getQuantity(),
-                        d.getPricePerUnit(),
-                        product,
-                        newOrder
-                )
+                    new OrderDetail(
+                            null,
+                            d.getQuantity(),
+                            d.getPricePerUnit(),
+                            product,
+                            newOrder
+                    )
             );
 
         }
     }
-    public List<Order> getAll() {
-        return this.orderRepository.findAll();
+
+    public List<GetOrderDTO> getAll() {
+        return this.orderRepository.findAll().stream().map((Order o) -> new GetOrderDTO(
+                o.getId(),
+                o.getUserEntity().getUsername(),
+                o.getDate(),
+                o.getState(),
+                o.getObservations(),
+                o.getDetails().stream().map( (OrderDetail d) -> new OrderDetailDTO(
+                        d.getQuantity(),
+                        d.getPricePerUnit(),
+                        d.getProduct()
+                )).toList()
+                )).collect(toList());
+    }
+    public List<GetOrderDTO> getAllByToken(String token) {
+        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
+                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+
+        return this.orderRepository.findAllByUserEntity(user).stream().map((Order o) -> new GetOrderDTO(
+                o.getId(),
+                o.getUserEntity().getUsername(),
+                o.getDate(),
+                o.getState(),
+                o.getObservations(),
+                o.getDetails().stream().map( (OrderDetail d) -> new OrderDetailDTO(
+                        d.getQuantity(),
+                        d.getPricePerUnit(),
+                        d.getProduct()
+                )).toList()
+        )).collect(toList());
+    }
+    public List<GetOrderDTO> getPending() {
+        OrderState state = this.orderStateRepository.findByName("Pendiente");
+        return this.orderRepository.findAllByState(state).stream().map((Order o) -> new GetOrderDTO(
+                o.getId(),
+                o.getUserEntity().getUsername(),
+                o.getDate(),
+                o.getState(),
+                o.getObservations(),
+                o.getDetails().stream().map( (OrderDetail d) -> new OrderDetailDTO(
+                        d.getQuantity(),
+                        d.getPricePerUnit(),
+                        d.getProduct()
+                )).toList()
+        )).collect(toList());
     }
 }

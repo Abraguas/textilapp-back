@@ -1,8 +1,8 @@
 package com.tup.textilapp.controller;
 
+import com.tup.textilapp.model.dto.GetOrderDTO;
 import com.tup.textilapp.model.dto.OrderDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
-import com.tup.textilapp.model.entity.Order;
 import com.tup.textilapp.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +41,35 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<?> getAll() {
         try {
-            List<Order> lst = this.orderService.getAll();
+            List<GetOrderDTO> lst = this.orderService.getAll();
             return ResponseEntity.ok(lst);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+    @GetMapping(path = "myOrders")
+    public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        try {
+            List<GetOrderDTO> lst = this.orderService.getAllByToken(token);
+            return ResponseEntity.ok(lst);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+    @GetMapping(path = "pending")
+    public ResponseEntity<?> getPending() {
+        try {
+            List<GetOrderDTO> lst = this.orderService.getPending();
+            return ResponseEntity.ok(lst);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
 }

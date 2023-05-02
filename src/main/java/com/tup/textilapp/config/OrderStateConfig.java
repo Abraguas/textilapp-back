@@ -28,9 +28,9 @@ public class OrderStateConfig implements CommandLineRunner {
 
         List<OrderState> list = new ArrayList<>();
         list.add(new OrderState(null, "Pendiente"));
-        list.add(new OrderState(null, "Aprobado"));
         list.add(new OrderState(null, "Cobrado"));
         list.add(new OrderState(null, "Entregado"));
+        list.add(new OrderState(null, "Cancelado"));
         repository.saveAll(list);
 
     }

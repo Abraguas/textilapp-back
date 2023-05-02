@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 
@@ -122,5 +123,33 @@ public class OrderService {
                         d.getProduct()
                 )).toList()
         )).collect(toList());
+    }
+    @Transactional
+    public void changeState(Integer orderId,OrderState s) {
+        OrderState state = this.orderStateRepository.findById(s.getId())
+                .orElseThrow(()-> new IllegalArgumentException("State with id: '" + s.getId() + "' doesn't exist"));
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+        if (state.equals(order.getState())) {
+            throw new IllegalStateException("The order already has the specified state");
+        }
+        order.setState(state);
+
+    }
+
+    @Transactional
+    public void cancelOrder(Integer orderId, String token) throws AccessDeniedException {
+        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
+                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+        OrderState state = this.orderStateRepository.findByName("Cancelado");
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+        if (!user.equals(order.getUserEntity()) && !user.getRole().getName().equals("ADMIN")) {
+            throw new AccessDeniedException("Users with a client role can only cancel their own orders");
+        }
+        if (state.equals(order.getState())) {
+            throw new IllegalStateException("The order already has the specified state");
+        }
+        order.setState(state);
     }
 }

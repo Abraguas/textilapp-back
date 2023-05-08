@@ -42,7 +42,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void registerOrder(OrderDTO orderDTO, String token) {
+    public Integer registerOrder(OrderDTO orderDTO, String token) {
         if (orderDTO.getDetails().isEmpty()) {
             throw new IllegalArgumentException("No details provided");
         }
@@ -57,7 +57,7 @@ public class OrderService {
                 orderDTO.getObservations(),
                 null
         );
-        this.orderRepository.save(newOrder);
+        Order rOrder = this.orderRepository.save(newOrder);
         for (OrderDetailDTO d : orderDTO.getDetails()) {
             Product product = this.productRepository.findById(d.getProduct().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
@@ -76,6 +76,7 @@ public class OrderService {
             );
 
         }
+        return rOrder.getId();
     }
 
     public List<GetOrderDTO> getAll() {
@@ -91,6 +92,21 @@ public class OrderService {
                         d.getProduct()
                 )).toList()
                 )).collect(toList());
+    }
+    public GetOrderDTO getById(Integer orderId) {
+        Order o = this.orderRepository.findById(orderId).orElseThrow(()->new IllegalStateException(""));
+        return new GetOrderDTO(
+                o.getId(),
+                o.getUserEntity().getUsername(),
+                o.getDate(),
+                o.getState(),
+                o.getObservations(),
+                o.getDetails().stream().map( (OrderDetail d) -> new OrderDetailDTO(
+                        d.getQuantity(),
+                        d.getPricePerUnit(),
+                        d.getProduct()
+                )).toList()
+        );
     }
     public List<GetOrderDTO> getAllByToken(String token) {
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))

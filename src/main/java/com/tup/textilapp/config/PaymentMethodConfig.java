@@ -28,7 +28,7 @@ public class PaymentMethodConfig implements CommandLineRunner {
 
         List<PaymentMethod> list = new ArrayList<>();
         list.add(new PaymentMethod(null, "Mercado Pago"));
-        list.add(new PaymentMethod(null, "Presencial"));
+        list.add(new PaymentMethod(null, "Transferencia"));
         repository.saveAll(list);
 
     }

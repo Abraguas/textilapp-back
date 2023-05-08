@@ -27,7 +27,7 @@ public class BrandConfig implements CommandLineRunner {
 
         List<Brand> list = new ArrayList<>();
         list.add(new Brand(null, "Arco Iris"));
-        list.add(new Brand(null, "Brecia"));
+        list.add(new Brand(null, "Brescia"));
         list.add(new Brand(null, "Danubio"));
         list.add(new Brand(null, "Eliplast"));
         list.add(new Brand(null, "Piñata"));

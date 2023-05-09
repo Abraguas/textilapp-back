@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -126,8 +127,12 @@ public class OrderService {
         )).collect(toList());
     }
     public List<GetOrderDTO> getPending() {
-        OrderState state = this.orderStateRepository.findByName("Pendiente");
-        return this.orderRepository.findAllByState(state).stream().map((Order o) -> new GetOrderDTO(
+        List<OrderState> lst = new ArrayList<>();
+        OrderState pendingState = this.orderStateRepository.findByName("Pendiente");
+        lst.add(pendingState);
+        OrderState payedState = this.orderStateRepository.findByName("Cobrado");
+        lst.add(payedState);
+        return this.orderRepository.findAllByStateIn(lst).stream().map((Order o) -> new GetOrderDTO(
                 o.getId(),
                 o.getUserEntity().getUsername(),
                 o.getDate(),
@@ -162,6 +167,9 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
         if (!user.equals(order.getUserEntity()) && !user.getRole().getName().equals("ADMIN")) {
             throw new AccessDeniedException("Users with a client role can only cancel their own orders");
+        }
+        if (!order.getState().getName().equals("Pendiente") && !user.getRole().getName().equals("ADMIN")) {
+            throw new AccessDeniedException("Users with a client role can only cancel pending orders");
         }
         if (state.equals(order.getState())) {
             throw new IllegalStateException("The order already has the specified state");

@@ -12,4 +12,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByUserEntity(UserEntity userEntity);
     List<Order> findAllByState(OrderState state);
+    List<Order> findAllByStateIn(List<OrderState> states);
+
 }

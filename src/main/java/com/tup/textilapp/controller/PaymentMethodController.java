@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "payment-method")
+@RequestMapping("/payment-method")
 public class PaymentMethodController {
     private final PaymentMethodService paymentMethodService;
     @Autowired

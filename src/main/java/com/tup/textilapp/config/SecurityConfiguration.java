@@ -39,9 +39,9 @@ public class SecurityConfiguration{
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
                 .and()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
                         .requestMatchers(HttpMethod.GET,"/category").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/category").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
 
                         .requestMatchers(HttpMethod.GET,"/product/listed").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/product/listed/**").hasAnyAuthority("ADMIN", "CLIENT")
@@ -53,12 +53,12 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.PUT,"/product/unlist/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/product/list/**").hasAuthority("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST,"/order").hasAnyAuthority("ADMIN", "CLIENT")
-                        .requestMatchers(HttpMethod.GET,"/order/myOrders").hasAnyAuthority("ADMIN", "CLIENT")
-                        .requestMatchers(HttpMethod.PUT,"/order/state/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/order/cancel/**").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/order").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/order/pending").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/order/myOrders").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.POST,"/order").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.PUT,"/order/state/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/order/cancel/**").hasAnyAuthority("ADMIN", "CLIENT")
 
                         .requestMatchers(HttpMethod.GET,"/unit").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/color").hasAnyAuthority("ADMIN", "CLIENT")
@@ -67,11 +67,15 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.POST,"/brand").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/brand/**").hasAuthority("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.POST,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.POST,"/payment").hasAuthority("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,"/payment-method").hasAnyAuthority("ADMIN", "CLIENT")
+
                         .requestMatchers("/stockMovement").hasAuthority("ADMIN")
 
                         .requestMatchers("/user/client").permitAll()
-
-                        .requestMatchers("/payment").permitAll()
 
                         .anyRequest().authenticated()
                 )

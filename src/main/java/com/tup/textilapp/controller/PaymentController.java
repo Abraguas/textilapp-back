@@ -1,6 +1,7 @@
 package com.tup.textilapp.controller;
 
 import com.mercadopago.exceptions.MPApiException;
+import com.tup.textilapp.model.dto.RegisterPaymentDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,19 @@ public class PaymentController {
         String token = request.getHeader("Authorization").substring(7);
         try {
             return ResponseEntity.ok(this.paymentService.createByOrder(orderId,token));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+    @PostMapping
+    public ResponseEntity<?> registerPayment(@RequestBody RegisterPaymentDTO body) {
+        try {
+            this.paymentService.registerPayment(body);
+            return ResponseEntity.ok(new ResponseMessageDTO("Payment registered succesfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }

@@ -7,6 +7,7 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import com.tup.textilapp.model.dto.PaymentApprovedDTO;
+import com.tup.textilapp.model.dto.RegisterPaymentDTO;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +45,7 @@ public class PaymentService {
     }
 
 
-    public Preference createByOrder(Integer orderId, String token) throws AccessDeniedException, MPException, MPApiException  {
+    public Preference createByOrder(Integer orderId, String token) throws AccessDeniedException, MPException, MPApiException {
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
                 .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         Order order = this.orderRepository.findById(orderId)
@@ -53,6 +55,7 @@ public class PaymentService {
         }
         return this.createPreference(order);
     }
+
     public Preference createPreference(Order order) throws MPException, MPApiException {
         PreferenceClient client = new PreferenceClient();
         List<PreferenceItemRequest> items = new ArrayList<>();
@@ -70,10 +73,10 @@ public class PaymentService {
             items.add(item);
         }
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                            .success(this.siteUrl + "pay-order")
-                            .pending(this.siteUrl + "pay-order")
-                            .failure(this.siteUrl + "pay-order")
-                            .build();
+                .success(this.siteUrl + "pay-order")
+                .pending(this.siteUrl + "pay-order")
+                .failure(this.siteUrl + "pay-order")
+                .build();
         List<PreferencePaymentTypeRequest> excludedPaymentTypes = new ArrayList<>();
         excludedPaymentTypes.add(PreferencePaymentTypeRequest.builder().id("ticket").build());
 
@@ -93,6 +96,7 @@ public class PaymentService {
 
 
     }
+
     @Transactional
     public PaymentApprovedDTO validatePayment(Long paymentId) throws MPException, MPApiException {
         PaymentClient client = new PaymentClient();
@@ -100,20 +104,20 @@ public class PaymentService {
         if (p.getStatus().equals("approved")) {
             Order order = this.orderRepository.findById(Integer.parseInt(p.getExternalReference()))
                     .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + p.getExternalReference() + "' doesn't exist"));
-            OrderState state =  this.orderStateRepository.findByName("Cobrado");
+            OrderState state = this.orderStateRepository.findByName("Cobrado");
             if (order.getState().equals(state)) {
                 throw new IllegalStateException("The order was already payed");
             }
             order.setState(state);
             PaymentMethod pm = this.paymentMethodRepository.findByName("Mercado Pago");
-            this.paymentRepository.save( new PaymentEntity(
-                null,
-                new Date(),
-                "Hecho a travéz de la página web",
-                p.getTransactionAmount(),
-                p.getId().toString(),
-                order,
-                pm
+            this.paymentRepository.save(new PaymentEntity(
+                    null,
+                    new Date(),
+                    "Hecho a travéz de la página web",
+                    p.getTransactionAmount(),
+                    p.getId().toString(),
+                    order,
+                    pm
             ));
         }
         return new PaymentApprovedDTO(
@@ -121,5 +125,30 @@ public class PaymentService {
                 p.getStatus(),
                 p.getStatusDetail()
         );
+    }
+
+    @Transactional
+    public void registerPayment(RegisterPaymentDTO body) {
+
+        Order order = this.orderRepository.findById(body.getOrderId())
+                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + body.getOrderId() + "' doesn't exist"));
+        OrderState state = this.orderStateRepository.findByName("Cobrado");
+        if (order.getState().equals(state)) {
+            throw new IllegalStateException("The order was already payed");
+        }
+        order.setState(state);
+        PaymentMethod pm = this.paymentMethodRepository.findById(body.getPaymentMethod().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Provided payment method does not exist"));
+        this.paymentRepository.save(new PaymentEntity(
+                null,
+                new Date(),
+                body.getObservations(),
+                order.getDetails().stream().map(detail -> BigDecimal.valueOf(detail.getQuantity()).multiply(detail.getPricePerUnit()))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add),
+                body.getTransactionNumber(),
+                order,
+                pm
+        ));
+
     }
 }

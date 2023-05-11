@@ -151,6 +151,9 @@ public class OrderService {
                 .orElseThrow(()-> new IllegalArgumentException("State with id: '" + s.getId() + "' doesn't exist"));
         Order order = this.orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+        if (state.getName().equals("Cancelado")) {
+            throw new IllegalStateException("You cannot cancel an order using this endpoint");
+        }
         if (state.equals(order.getState())) {
             throw new IllegalStateException("The order already has the specified state");
         }
@@ -173,6 +176,9 @@ public class OrderService {
         }
         if (state.equals(order.getState())) {
             throw new IllegalStateException("The order already has the specified state");
+        }
+        for (OrderDetail d : order.getDetails()) {
+            d.getProduct().setStock(d.getProduct().getStock() + d.getQuantity());
         }
         order.setState(state);
     }

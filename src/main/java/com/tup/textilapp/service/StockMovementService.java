@@ -57,7 +57,9 @@ public class StockMovementService {
         }
         List<OrderDetail> dtLst = this.orderDetailRepository.findAllByProduct(product);
         for (OrderDetail d : dtLst) {
-            result -= d.getQuantity();
+            if (!d.getOrder().getState().getName().equals("Cancelado")) {
+                result -= d.getQuantity();
+            }
         }
         return result;
     }

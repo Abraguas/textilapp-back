@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Integer> {
-
+    boolean existsAllByCategory_Id(Integer categoryId);
 }

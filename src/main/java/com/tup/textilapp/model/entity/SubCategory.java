@@ -15,7 +15,7 @@ public class SubCategory {
     @GeneratedValue
     private Integer id;
     private String name;
-    @ManyToOne(targetEntity = Category.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Category.class)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 }

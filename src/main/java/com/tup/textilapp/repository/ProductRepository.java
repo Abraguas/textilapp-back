@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findAllBySubCategory(SubCategory subCategory);
+    boolean existsAllBySubCategory_Id(Integer subCategoryId);
+    boolean existsAllByBrand_Id(Integer brandId);
     List<Product> findAllByIsListed(Boolean isListed);
     List<Product> findAllByIsListedAndSubCategory(Boolean isListed, SubCategory subCategory);
 }

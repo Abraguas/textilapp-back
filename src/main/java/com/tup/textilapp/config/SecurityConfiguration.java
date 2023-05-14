@@ -39,9 +39,14 @@ public class SecurityConfiguration{
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
                 .and()
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
+
                         .requestMatchers(HttpMethod.GET,"/category").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/category").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/category/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/category/subCategory/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/category/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/category/subCategory/**").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.GET,"/product/listed").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/product/listed/**").hasAnyAuthority("ADMIN", "CLIENT")
@@ -66,6 +71,7 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.GET,"/brand").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/brand").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/brand/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/brand/**").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.GET,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")

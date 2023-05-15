@@ -1,11 +1,13 @@
 package com.tup.textilapp.controller;
 
+import com.tup.textilapp.model.dto.MovementReportRequestDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.StockMovement;
 import com.tup.textilapp.service.StockMovementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/stockMovement")
@@ -44,6 +46,19 @@ public class StockMovementController {
         try {
             return ResponseEntity.ok(this.stockMovementService.getMovementsByProduct(productId));
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+    @GetMapping(path = "/report")
+    public ResponseEntity<?> getMovementsByProductIdAndDatePeriod(@RequestBody MovementReportRequestDTO body) {
+        try {
+            System.out.println(body.toString());
+            return ResponseEntity.ok(this.stockMovementService.getMovementsByProductAndPeriod(body.getProductId(), body.getStartDate(), body.getEndDate()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));

@@ -63,11 +63,27 @@ public class StockMovementService {
         }
         return result;
     }
+
     public List<StockMovementDTO> getMovementsByProduct(Integer productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
                         productId + "' doesn't exist"));
         return this.stockMovementRepository.findAllByProduct(product).stream().map(
+                (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
+        ).collect(Collectors.toList());
+    }
+    public List<StockMovementDTO> getMovementsByProductAndPeriod(Integer productId, Date startDate, Date endDate) {
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
+                        productId + "' doesn't exist"));
+        if (startDate.compareTo(endDate) > 0) {
+            throw new IllegalStateException("Start date cannot be more recent than end date");
+        }
+        if (startDate.compareTo(endDate) == 0) {
+            throw new IllegalStateException("Start date cannot be the exact same as end date");
+        }
+        System.out.println(startDate.compareTo(endDate));
+        return this.stockMovementRepository.findByDateBetweenAndProduct(startDate, endDate, product).stream().map(
                 (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
         ).collect(Collectors.toList());
     }

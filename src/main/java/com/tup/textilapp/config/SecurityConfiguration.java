@@ -81,6 +81,8 @@ public class SecurityConfiguration{
 
                         .requestMatchers("/stockMovement").hasAuthority("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET,"/user").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/user/ranking").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers("/user/client").permitAll()
 
                         .anyRequest().authenticated()

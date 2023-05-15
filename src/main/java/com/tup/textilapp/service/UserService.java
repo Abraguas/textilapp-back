@@ -1,5 +1,7 @@
 package com.tup.textilapp.service;
 
+import com.tup.textilapp.model.dto.GetUserDTO;
+import com.tup.textilapp.model.dto.UserRankingDTO;
 import com.tup.textilapp.model.entity.Role;
 import com.tup.textilapp.model.entity.UserEntity;
 import com.tup.textilapp.repository.RoleRepository;
@@ -48,6 +50,19 @@ public class UserService implements UserDetailsService {
 
     public String getRoleByToken(String token) throws MalformedJwtException {
         return getUserByToken(token).getRole().getName();
+    }
+    public List<GetUserDTO> getAll()  {
+        return this.userRepository.findAll().stream().map(u -> new GetUserDTO(
+                u.getId(),
+                u.getUsername(),
+                u.getEmail(),
+                u.getName(),
+                u.getLastname(),
+                u.getPhonenumber()
+        )).toList();
+    }
+    public List<UserRankingDTO> getUsersRanking() {
+        return this.userRepository.getUsersTotalMoneySpent();
     }
     public UserEntity getUserByToken(String token) throws MalformedJwtException {
         String username = this.jwtService.extractClaimUsername(token);

@@ -46,6 +46,24 @@ public class UserController {
         }
 
     }
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        try{
+            return ResponseEntity.ok(this.userService.getAll());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+
+    }
+    @GetMapping(path = "/ranking")
+    public ResponseEntity<?> getUsersRanking() {
+        try{
+            return ResponseEntity.ok(this.userService.getUsersRanking());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+
+    }
     @PostMapping(path = "/client")
     public ResponseEntity<?> registerClient(@RequestBody UserEntity user) {
         try {

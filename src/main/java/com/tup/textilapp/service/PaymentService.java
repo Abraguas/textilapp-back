@@ -8,6 +8,7 @@ import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import com.tup.textilapp.model.dto.PaymentApprovedDTO;
 import com.tup.textilapp.model.dto.RegisterPaymentDTO;
+import com.tup.textilapp.model.dto.TotalEarningsPerMonthDTO;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +97,9 @@ public class PaymentService {
 
 
     }
-
+    public List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth() {
+        return this.paymentRepository.getTotalEarningsPerMonth();
+    }
     @Transactional
     public PaymentApprovedDTO validatePayment(Long paymentId) throws MPException, MPApiException {
         PaymentClient client = new PaymentClient();

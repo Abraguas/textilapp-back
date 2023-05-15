@@ -75,6 +75,7 @@ public class SecurityConfiguration{
 
                         .requestMatchers(HttpMethod.GET,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/payment/**").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/payment/totalEarningsPerMonth").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/payment").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.GET,"/payment-method").hasAnyAuthority("ADMIN", "CLIENT")

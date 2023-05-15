@@ -42,6 +42,14 @@ public class PaymentController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+    @GetMapping(path = "totalEarningsPerMonth")
+    public ResponseEntity<?> getTotalEarningsPerMonth() {
+        try {
+            return ResponseEntity.ok(paymentService.getTotalEarningsPerMonth());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
     @GetMapping(path = "{paymentId}")
     public ResponseEntity<?> validatePayment(@PathVariable Long paymentId) {
         try {

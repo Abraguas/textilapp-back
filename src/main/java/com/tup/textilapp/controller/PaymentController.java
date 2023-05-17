@@ -6,8 +6,11 @@ import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 
 @RestController
@@ -24,11 +27,12 @@ public class PaymentController {
     public ResponseEntity<?> create(@PathVariable Integer orderId, HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
         try {
-            return ResponseEntity.ok(this.paymentService.createByOrder(orderId,token));
+            return ResponseEntity.ok(this.paymentService.createByOrder(orderId, token));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @PostMapping
     public ResponseEntity<?> registerPayment(@RequestBody RegisterPaymentDTO body) {
         try {
@@ -42,14 +46,18 @@ public class PaymentController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping(path = "totalEarningsPerMonth")
-    public ResponseEntity<?> getTotalEarningsPerMonth() {
+    public ResponseEntity<?> getTotalEarningsPerMonth(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate) {
         try {
-            return ResponseEntity.ok(paymentService.getTotalEarningsPerMonth());
+            return ResponseEntity.ok(paymentService.getTotalEarningsPerMonth(startDate, endDate));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping(path = "{paymentId}")
     public ResponseEntity<?> validatePayment(@PathVariable Long paymentId) {
         try {

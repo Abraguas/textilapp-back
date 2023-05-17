@@ -97,8 +97,14 @@ public class PaymentService {
 
 
     }
-    public List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth() {
-        return this.paymentRepository.getTotalEarningsPerMonth();
+    public List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth(Date startDate, Date endDate) {
+        if (startDate.compareTo(endDate) > 0) {
+            throw new IllegalStateException("Start date cannot be more recent than end date");
+        }
+        if (startDate.compareTo(endDate) == 0) {
+            throw new IllegalStateException("Start date cannot be the exact same as end date");
+        }
+        return this.paymentRepository.getTotalEarningsPerMonth(startDate, endDate);
     }
     @Transactional
     public PaymentApprovedDTO validatePayment(Long paymentId) throws MPException, MPApiException {

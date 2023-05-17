@@ -65,6 +65,8 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.PUT,"/order/state/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/order/cancel/**").hasAnyAuthority("ADMIN", "CLIENT")
 
+                        .requestMatchers(HttpMethod.GET,"/orderState").hasAuthority("ADMIN")
+
                         .requestMatchers(HttpMethod.GET,"/unit").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/color").hasAnyAuthority("ADMIN", "CLIENT")
 

@@ -15,16 +15,16 @@ import java.util.Date;
 @Table(name = "payments")
 public class PaymentEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Date date;
     private String observations;
     private BigDecimal ammountCharged;
     private String transactionNumber;
-    @ManyToOne(targetEntity = Order.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Order.class)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
-    @ManyToOne(targetEntity = PaymentMethod.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = PaymentMethod.class)
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 }

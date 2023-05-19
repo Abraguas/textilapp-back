@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Table(name = "products")
 public class Product {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
@@ -26,16 +26,16 @@ public class Product {
     private String image;
     private Boolean isListed;
 
-    @ManyToOne(targetEntity = Brand.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Brand.class)
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
-    @ManyToOne(targetEntity = Unit.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Unit.class)
     @JoinColumn(name = "unit_id", referencedColumnName = "id")
     private Unit unit;
-    @ManyToOne(targetEntity = Color.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Color.class)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
     private Color color;
-    @ManyToOne(targetEntity = SubCategory.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = SubCategory.class)
     @JoinColumn(name = "subcategory_id", referencedColumnName = "id")
     private SubCategory subCategory;
 }

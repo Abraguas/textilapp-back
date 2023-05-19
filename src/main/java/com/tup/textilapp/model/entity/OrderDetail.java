@@ -15,15 +15,15 @@ import java.math.BigDecimal;
 @Table(name = "order_details")
 public class OrderDetail {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Integer quantity;
     private BigDecimal pricePerUnit;
-    @ManyToOne(targetEntity = Product.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     @JsonIgnore
-    @ManyToOne(targetEntity = Order.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Order.class)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 }

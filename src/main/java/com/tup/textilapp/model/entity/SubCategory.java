@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "subcategories")
 public class SubCategory {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private String name;
     @ManyToOne(targetEntity = Category.class)

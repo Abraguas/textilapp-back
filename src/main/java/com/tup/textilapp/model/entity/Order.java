@@ -15,14 +15,14 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne(targetEntity = UserEntity.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
     private Date date;
-    @ManyToOne(targetEntity = OrderState.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = OrderState.class)
     @JoinColumn(name = "state_id", referencedColumnName = "id")
     private OrderState state;
 

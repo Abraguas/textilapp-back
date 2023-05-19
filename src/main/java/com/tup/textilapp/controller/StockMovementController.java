@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/stockMovement")
@@ -23,6 +25,19 @@ public class StockMovementController {
         try {
             this.stockMovementService.register(stockMovement);
             return ResponseEntity.ok(new ResponseMessageDTO("Stock movement registered succesfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.unprocessableEntity().body(new ResponseMessageDTO(e.getMessage()));
+        }  catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+    @PostMapping(path = "all")
+    public ResponseEntity<?> registerMultiple(@RequestBody List<StockMovement> stockMovements) {
+        try {
+            this.stockMovementService.registerAll(stockMovements);
+            return ResponseEntity.ok(new ResponseMessageDTO("Stock movements registered succesfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (IllegalStateException e) {

@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "stock_movements")
 public class StockMovement {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Integer quantity;
     private Integer priorStock;

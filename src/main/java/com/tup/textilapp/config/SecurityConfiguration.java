@@ -83,6 +83,7 @@ public class SecurityConfiguration{
                         .requestMatchers(HttpMethod.GET,"/payment-method").hasAnyAuthority("ADMIN", "CLIENT")
 
                         .requestMatchers("/stockMovement").hasAuthority("ADMIN")
+                        .requestMatchers("/stockMovement/all").hasAuthority("ADMIN")
                         .requestMatchers("/stockMovement/report").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.GET,"/user").hasAnyAuthority("ADMIN", "CLIENT")

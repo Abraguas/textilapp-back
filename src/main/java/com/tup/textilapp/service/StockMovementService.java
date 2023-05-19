@@ -46,6 +46,10 @@ public class StockMovementService {
 
         this.stockMovementRepository.save(stockMovement);
     }
+    @Transactional
+    public void registerAll(List<StockMovement> stockMovements) {
+        stockMovements.forEach(this::register);
+    }
     public Integer getStockByProduct(Integer productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +

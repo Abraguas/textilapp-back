@@ -28,7 +28,7 @@ public class CategoryController {
     public ResponseEntity<?> saveCategory(@RequestBody Category category) {
         try {
             this.categoryService.saveCategory(category);
-            return ResponseEntity.ok("Registered Category succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Registered Category succesfully"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
@@ -37,7 +37,7 @@ public class CategoryController {
     public ResponseEntity<?> saveSubCategory(@RequestBody SubCategory subCategory) {
         try {
             this.categoryService.saveSubcategory(subCategory);
-            return ResponseEntity.ok("Registered SubCategory succesfully");
+            return ResponseEntity.ok(new ResponseMessageDTO("Registered SubCategory succesfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
@@ -49,8 +49,10 @@ public class CategoryController {
         try {
             this.categoryService.deleteCategory(categoryId);
             return ResponseEntity.ok(new ResponseMessageDTO("Category deleted succesfully"));
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
@@ -60,8 +62,10 @@ public class CategoryController {
         try {
             this.categoryService.deleteSubcategory(subCategoryId);
             return ResponseEntity.ok(new ResponseMessageDTO("Subcategory deleted succesfully"));
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }

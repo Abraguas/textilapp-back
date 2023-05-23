@@ -53,6 +53,8 @@ public class PaymentController {
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate) {
         try {
             return ResponseEntity.ok(paymentService.getTotalEarningsPerMonth(startDate, endDate));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }

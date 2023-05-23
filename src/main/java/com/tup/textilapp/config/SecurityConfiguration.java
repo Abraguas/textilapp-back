@@ -60,6 +60,7 @@ public class SecurityConfiguration{
 
                         .requestMatchers(HttpMethod.GET,"/order").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/order/pending").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/order/highestSellingProducts").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/order/myOrders").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.POST,"/order").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.PUT,"/order/state/**").hasAuthority("ADMIN")

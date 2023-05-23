@@ -1,6 +1,7 @@
 package com.tup.textilapp.service;
 
 import com.tup.textilapp.model.dto.GetOrderDTO;
+import com.tup.textilapp.model.dto.HighestSellingProductsDTO;
 import com.tup.textilapp.model.dto.OrderDTO;
 import com.tup.textilapp.model.dto.OrderDetailDTO;
 import com.tup.textilapp.model.entity.*;
@@ -181,5 +182,14 @@ public class OrderService {
             d.getProduct().setStock(d.getProduct().getStock() + d.getQuantity());
         }
         order.setState(state);
+    }
+    public List<HighestSellingProductsDTO> getHighestSellingProducts(Date startDate, Date endDate) {
+        if (startDate.compareTo(endDate) > 0) {
+            throw new IllegalStateException("Start date cannot be more recent than end date");
+        }
+        if (startDate.compareTo(endDate) == 0) {
+            throw new IllegalStateException("Start date cannot be the exact same as end date");
+        }
+        return this.orderDetailRepository.highestSellingProducts(startDate, endDate);
     }
 }

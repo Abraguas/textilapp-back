@@ -7,10 +7,12 @@ import com.tup.textilapp.model.entity.OrderState;
 import com.tup.textilapp.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -19,11 +21,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @Autowired
-    public OrderController (
+    public OrderController(
             OrderService orderService
     ) {
         this.orderService = orderService;
     }
+
     @PostMapping
     public ResponseEntity<?> registerOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
@@ -40,6 +43,7 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping
     public ResponseEntity<?> getAll() {
         try {
@@ -51,6 +55,7 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping(path = "myOrders")
     public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
@@ -63,6 +68,7 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping(path = "pending")
     public ResponseEntity<?> getPending() {
         try {
@@ -74,6 +80,7 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @GetMapping(path = "{orderId}")
     public ResponseEntity<?> getById(@PathVariable Integer orderId) {
         try {
@@ -85,6 +92,20 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
+    @GetMapping(path = "highestSellingProducts")
+    public ResponseEntity<?> getHighestSellingProducts(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate) {
+        try {
+            return ResponseEntity.ok(this.orderService.getHighestSellingProducts(startDate, endDate));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
+
     @PutMapping(path = "state/{orderId}")
     public ResponseEntity<?> updateState(@PathVariable Integer orderId, @RequestBody OrderState state) {
         try {
@@ -100,8 +121,9 @@ public class OrderController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @PutMapping(path = "cancel/{orderId}")
-    public ResponseEntity<?> cancel(@PathVariable Integer orderId, HttpServletRequest request ) {
+    public ResponseEntity<?> cancel(@PathVariable Integer orderId, HttpServletRequest request) {
         System.out.println("llegue acá");
         String token = request.getHeader("Authorization").substring(7);
         try {

@@ -1,13 +1,14 @@
 package com.tup.textilapp.controller;
 
-import com.tup.textilapp.model.dto.MovementReportRequestDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.StockMovement;
 import com.tup.textilapp.service.StockMovementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -67,10 +68,12 @@ public class StockMovementController {
         }
     }
     @GetMapping(path = "/report")
-    public ResponseEntity<?> getMovementsByProductIdAndDatePeriod(@RequestBody MovementReportRequestDTO body) {
+    public ResponseEntity<?> getMovementsByProductIdAndDatePeriod(
+            @RequestParam Integer productId,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate)  {
         try {
-            System.out.println(body.toString());
-            return ResponseEntity.ok(this.stockMovementService.getMovementsByProductAndPeriod(body.getProductId(), body.getStartDate(), body.getEndDate()));
+            return ResponseEntity.ok(this.stockMovementService.getMovementsByProductAndPeriod(productId, startDate, endDate));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
         } catch (IllegalStateException e) {

@@ -86,7 +86,6 @@ public class StockMovementService {
         if (startDate.compareTo(endDate) == 0) {
             throw new IllegalStateException("Start date cannot be the exact same as end date");
         }
-        System.out.println(startDate.compareTo(endDate));
         return this.stockMovementRepository.findByDateBetweenAndProduct(startDate, endDate, product).stream().map(
                 (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
         ).collect(Collectors.toList());

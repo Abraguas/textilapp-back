@@ -59,7 +59,24 @@ public class PaymentController {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
-
+    @GetMapping
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize
+    ) {
+        try {
+            if (pageNum == null || pageSize == null) {
+                return ResponseEntity.ok(paymentService.getAll());
+            }
+            return ResponseEntity.ok(paymentService.getAllByPageAndSize(pageNum,pageSize));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
+    }
     @GetMapping(path = "{paymentId}")
     public ResponseEntity<?> validatePayment(@PathVariable Long paymentId) {
         try {

@@ -6,13 +6,15 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
-import com.tup.textilapp.model.dto.PaymentApprovedDTO;
-import com.tup.textilapp.model.dto.RegisterPaymentDTO;
-import com.tup.textilapp.model.dto.TotalEarningsPerMonthDTO;
+import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,6 +108,45 @@ public class PaymentService {
         }
         return this.paymentRepository.getTotalEarningsPerMonth(startDate, endDate);
     }
+    public List<PaymentDTO> getAll() {
+        return this.paymentRepository.findAll().stream().map(p ->
+            new PaymentDTO(
+                    p.getId(),
+                    p.getOrder().getUserEntity().getUsername(),
+                    p.getDate(),
+                    p.getObservations(),
+                    p.getAmmountCharged(),
+                    p.getTransactionNumber(),
+                    p.getOrder().getId(),
+                    p.getPaymentMethod()
+            )
+        ).toList();
+    }
+    public PaginatedResponseDTO getAllByPageAndSize(Integer pageNum, Integer pageSize) {
+        Pageable p = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "date"));
+        Page<PaymentEntity> page = this.paymentRepository.findAll(p);
+        return mapPaymentsToPaginatedResponse(page);
+    }
+    private PaginatedResponseDTO mapPaymentsToPaginatedResponse(Page<PaymentEntity> page) {
+        return new PaginatedResponseDTO(
+                page.getContent().stream().map(p ->
+                        new PaymentDTO(
+                                p.getId(),
+                                p.getOrder().getUserEntity().getUsername(),
+                                p.getDate(),
+                                p.getObservations(),
+                                p.getAmmountCharged(),
+                                p.getTransactionNumber(),
+                                p.getOrder().getId(),
+                                p.getPaymentMethod()
+                        )
+                ).toArray(),
+                page.getNumber(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
     @Transactional
     public PaymentApprovedDTO validatePayment(Long paymentId) throws MPException, MPApiException {
         PaymentClient client = new PaymentClient();

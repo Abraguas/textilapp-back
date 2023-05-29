@@ -1,12 +1,13 @@
 package com.tup.textilapp.service;
 
-import com.tup.textilapp.model.dto.GetOrderDTO;
-import com.tup.textilapp.model.dto.HighestSellingProductsDTO;
-import com.tup.textilapp.model.dto.OrderDTO;
-import com.tup.textilapp.model.dto.OrderDetailDTO;
+import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +96,11 @@ public class OrderService {
                 )).toList()
                 )).collect(toList());
     }
+    public PaginatedResponseDTO getAllByPageAndSize(Integer pageNum, Integer size) {
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
+        Page<Order> page = this.orderRepository.findAll(p);
+        return mapOrdersToPaginatedResponse(page);
+    }
     public GetOrderDTO getById(Integer orderId) {
         Order o = this.orderRepository.findById(orderId).orElseThrow(()->new IllegalStateException(""));
         return new GetOrderDTO(
@@ -146,6 +152,37 @@ public class OrderService {
                 )).toList()
         )).collect(toList());
     }
+    public PaginatedResponseDTO getPendingByPageAndSize(Integer pageNum, Integer size) {
+        List<OrderState> lst = new ArrayList<>();
+        OrderState pendingState = this.orderStateRepository.findByName("Pendiente");
+        lst.add(pendingState);
+        OrderState payedState = this.orderStateRepository.findByName("Cobrado");
+        lst.add(payedState);
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.ASC, "date"));
+        Page<Order> page = this.orderRepository.findAllByStateIn(lst,p);
+        return mapOrdersToPaginatedResponse(page);
+    }
+
+    private PaginatedResponseDTO mapOrdersToPaginatedResponse(Page<Order> page) {
+        return new PaginatedResponseDTO(
+                page.getContent().stream().map((Order o) -> new GetOrderDTO(
+                        o.getId(),
+                        o.getUserEntity().getUsername(),
+                        o.getDate(),
+                        o.getState(),
+                        o.getObservations(),
+                        o.getDetails().stream().map( (OrderDetail d) -> new OrderDetailDTO(
+                                d.getQuantity(),
+                                d.getPricePerUnit(),
+                                d.getProduct()
+                        )).toList()
+                )).toArray(),
+                page.getNumber(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
     @Transactional
     public void changeState(Integer orderId,OrderState s) {
         OrderState state = this.orderStateRepository.findById(s.getId())

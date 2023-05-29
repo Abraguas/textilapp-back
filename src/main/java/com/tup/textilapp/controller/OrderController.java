@@ -45,10 +45,15 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize
+    ) {
         try {
-            List<GetOrderDTO> lst = this.orderService.getAll();
-            return ResponseEntity.ok(lst);
+            if (pageNum == null || pageSize == null) {
+               return ResponseEntity.ok(this.orderService.getAll());
+            }
+            return ResponseEntity.ok(this.orderService.getAllByPageAndSize(pageNum,pageSize));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
@@ -70,10 +75,15 @@ public class OrderController {
     }
 
     @GetMapping(path = "pending")
-    public ResponseEntity<?> getPending() {
+    public ResponseEntity<?> getPending(
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize
+    ) {
         try {
-            List<GetOrderDTO> lst = this.orderService.getPending();
-            return ResponseEntity.ok(lst);
+            if (pageNum == null || pageSize == null) {
+                return ResponseEntity.ok(this.orderService.getPending());
+            }
+            return ResponseEntity.ok(this.orderService.getPendingByPageAndSize(pageNum,pageSize));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {

@@ -13,7 +13,10 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByUserEntity(UserEntity userEntity);
+    Page<Order> findAllByUserEntity(UserEntity userEntity, Pageable p);
     List<Order> findAllByStateIn(List<OrderState> states);
     Page<Order> findAllByStateIn(List<OrderState> states, Pageable p);
+    Page<Order> findAllByUserEntity_UsernameContainingIgnoreCase(String infix, Pageable p);
+    Page<Order> findAllByStateInAndUserEntity_UsernameContainingIgnoreCase(List<OrderState> states, String infix, Pageable p);
 
 }

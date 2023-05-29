@@ -96,7 +96,12 @@ public class OrderService {
                 )).toList()
                 )).collect(toList());
     }
-    public PaginatedResponseDTO getAllByPageAndSize(Integer pageNum, Integer size) {
+    public PaginatedResponseDTO getByUsernameAndPageAndSize(Integer pageNum, Integer size, String infix) {
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
+        Page<Order> page = this.orderRepository.findAllByUserEntity_UsernameContainingIgnoreCase(infix,p);
+        return mapOrdersToPaginatedResponse(page);
+    }
+    public PaginatedResponseDTO getByPageAndSize(Integer pageNum, Integer size) {
         Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
         Page<Order> page = this.orderRepository.findAll(p);
         return mapOrdersToPaginatedResponse(page);
@@ -133,6 +138,12 @@ public class OrderService {
                 )).toList()
         )).collect(toList());
     }
+    public PaginatedResponseDTO getAllByTokenAndPageAndSize(String token, Integer pageNum, Integer size) {
+        UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
+                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
+        return mapOrdersToPaginatedResponse(orderRepository.findAllByUserEntity(user, p));
+    }
     public List<GetOrderDTO> getPending() {
         List<OrderState> lst = new ArrayList<>();
         OrderState pendingState = this.orderStateRepository.findByName("Pendiente");
@@ -153,14 +164,22 @@ public class OrderService {
         )).collect(toList());
     }
     public PaginatedResponseDTO getPendingByPageAndSize(Integer pageNum, Integer size) {
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.ASC, "date"));
+        Page<Order> page = this.orderRepository.findAllByStateIn(getPendingStates(),p);
+        return mapOrdersToPaginatedResponse(page);
+    }
+    public PaginatedResponseDTO getPendingByUsernameAndPageAndSize(Integer pageNum, Integer size, String infix) {
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.ASC, "date"));
+        Page<Order> page = this.orderRepository.findAllByStateInAndUserEntity_UsernameContainingIgnoreCase(getPendingStates(),infix, p);
+        return mapOrdersToPaginatedResponse(page);
+    }
+    public List<OrderState> getPendingStates() {
         List<OrderState> lst = new ArrayList<>();
         OrderState pendingState = this.orderStateRepository.findByName("Pendiente");
         lst.add(pendingState);
         OrderState payedState = this.orderStateRepository.findByName("Cobrado");
         lst.add(payedState);
-        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.ASC, "date"));
-        Page<Order> page = this.orderRepository.findAllByStateIn(lst,p);
-        return mapOrdersToPaginatedResponse(page);
+        return lst;
     }
 
     private PaginatedResponseDTO mapOrdersToPaginatedResponse(Page<Order> page) {

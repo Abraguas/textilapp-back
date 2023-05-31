@@ -23,5 +23,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
             "ORDER BY SUM(od.quantity * od.pricePerUnit) DESC " +
             "LIMIT 100")
     List<UserRankingDTO> getUsersTotalMoneySpent();
+    List<UserEntity> findAllByUsernameContainingIgnoreCase(String infix);
 }
 

@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping(path = "/role")
     public ResponseEntity<?> getRole(HttpServletRequest request) {
-        try{
+        try {
             String token = request.getHeader("Authorization").substring(7);
             String role = this.userService.getRoleByToken(token);
             return ResponseEntity.ok(new JwtDTO(role));
@@ -33,9 +33,10 @@ public class UserController {
         }
 
     }
+
     @GetMapping(path = "/self")
     public ResponseEntity<?> getSelf(HttpServletRequest request) {
-        try{
+        try {
             String token = request.getHeader("Authorization").substring(7);
             UserEntity user = this.userService.getUserByToken(token);
             return ResponseEntity.ok(user);
@@ -46,41 +47,50 @@ public class UserController {
         }
 
     }
+
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        try{
-            return ResponseEntity.ok(this.userService.getAll());
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String searchString
+    ) {
+        try {
+            if (searchString == null || searchString.length() < 1) {
+                return ResponseEntity.ok(this.userService.getAll());
+            }
+            return ResponseEntity.ok(userService.searchByUserame(searchString));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
 
     }
+
     @GetMapping(path = "/ranking")
     public ResponseEntity<?> getUsersRanking() {
-        try{
+        try {
             return ResponseEntity.ok(this.userService.getUsersRanking());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
 
     }
+
     @PostMapping(path = "/client")
     public ResponseEntity<?> registerClient(@RequestBody UserEntity user) {
         try {
             this.userService.registerClient(user);
-            return ResponseEntity.ok(new ResponseMessageDTO("User registered succesfully" ));
+            return ResponseEntity.ok(new ResponseMessageDTO("User registered succesfully"));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
     }
+
     @PutMapping(path = "/self")
     public ResponseEntity<?> updateSelf(HttpServletRequest request, @RequestBody UserEntity user) {
         try {
             String token = request.getHeader("Authorization").substring(7);
-            this.userService.updateUser(token,user);
-            return ResponseEntity.ok(new ResponseMessageDTO("User updated succesfully" ));
+            this.userService.updateUser(token, user);
+            return ResponseEntity.ok(new ResponseMessageDTO("User updated succesfully"));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {

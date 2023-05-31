@@ -61,6 +61,16 @@ public class UserService implements UserDetailsService {
                 u.getPhonenumber()
         )).toList();
     }
+    public List<GetUserDTO> searchByUserame(String name) {
+        return this.userRepository.findAllByUsernameContainingIgnoreCase(name).stream().map(u -> new GetUserDTO(
+                u.getId(),
+                u.getUsername(),
+                u.getEmail(),
+                u.getName(),
+                u.getLastname(),
+                u.getPhonenumber()
+        )).toList();
+    }
     public List<UserRankingDTO> getUsersRanking() {
         return this.userRepository.getUsersTotalMoneySpent();
     }

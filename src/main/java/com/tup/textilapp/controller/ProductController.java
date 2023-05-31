@@ -75,8 +75,19 @@ public class ProductController {
 
     }
     @GetMapping(path = "all")
-    public List<Product> getAll() {
-        return this.productService.getAll();
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String searchString
+    ) {
+        try {
+            if (searchString == null || searchString.length() < 1) {
+                return ResponseEntity.ok(this.productService.getAll());
+            }
+            return ResponseEntity.ok(productService.searchByName(searchString));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
+        }
     }
     @GetMapping(path = "listed")
     public List<Product> getListed() {

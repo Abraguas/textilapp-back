@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     boolean existsAllByBrand_Id(Integer brandId);
     List<Product> findAllByIsListed(Boolean isListed);
     List<Product> findAllByIsListedAndSubCategory(Boolean isListed, SubCategory subCategory);
+    List<Product> findAllByNameContainingIgnoreCase(String infix);
 }

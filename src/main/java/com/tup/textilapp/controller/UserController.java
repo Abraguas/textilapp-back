@@ -7,8 +7,11 @@ import com.tup.textilapp.service.UserService;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("user")
@@ -64,13 +67,16 @@ public class UserController {
     }
 
     @GetMapping(path = "/ranking")
-    public ResponseEntity<?> getUsersRanking() {
+    public ResponseEntity<?> getUsersRanking(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate) {
         try {
-            return ResponseEntity.ok(this.userService.getUsersRanking());
+            return ResponseEntity.ok(this.userService.getUsersRanking(startDate, endDate));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
         }
-
     }
 
     @PostMapping(path = "/client")

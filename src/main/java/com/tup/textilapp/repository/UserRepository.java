@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +20,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
             "JOIN o.userEntity u " +
             "JOIN o.state s " +
             "WHERE s.name IN ('Cobrado', 'Entregado') " +
+            "AND o.date BETWEEN ?1 AND ?2 " +
             "GROUP BY u.id " +
             "ORDER BY SUM(od.quantity * od.pricePerUnit) DESC " +
             "LIMIT 100")
-    List<UserRankingDTO> getUsersTotalMoneySpent();
+    List<UserRankingDTO> getUsersTotalMoneySpent(Date startDate, Date endDate);
     List<UserEntity> findAllByUsernameContainingIgnoreCase(String infix);
 }
 

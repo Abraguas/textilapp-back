@@ -18,6 +18,7 @@ import com.tup.textilapp.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Log4j2
@@ -71,8 +72,14 @@ public class UserService implements UserDetailsService {
                 u.getPhonenumber()
         )).toList();
     }
-    public List<UserRankingDTO> getUsersRanking() {
-        return this.userRepository.getUsersTotalMoneySpent();
+    public List<UserRankingDTO> getUsersRanking(Date startDate, Date endDate) {
+        if (startDate.compareTo(endDate) > 0) {
+            throw new IllegalStateException("Start date cannot be more recent than end date");
+        }
+        if (startDate.compareTo(endDate) == 0) {
+            throw new IllegalStateException("Start date cannot be the exact same as end date");
+        }
+        return this.userRepository.getUsersTotalMoneySpent(startDate, endDate);
     }
     public UserEntity getUserByToken(String token) throws MalformedJwtException {
         String username = this.jwtService.extractClaimUsername(token);

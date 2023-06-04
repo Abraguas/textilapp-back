@@ -9,6 +9,7 @@ import com.tup.textilapp.repository.OrderDetailRepository;
 import com.tup.textilapp.repository.ProductRepository;
 import com.tup.textilapp.repository.StockMovementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +55,7 @@ public class StockMovementService {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
                         productId + "' doesn't exist"));
-        List<StockMovement> mvLst = this.stockMovementRepository.findAllByProduct(product);
+        List<StockMovement> mvLst = this.stockMovementRepository.findAllByProductOrderByDate(product);
         Integer result = 0;
         for (StockMovement s : mvLst ) {
             result += s.getQuantity();
@@ -72,7 +73,7 @@ public class StockMovementService {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
                         productId + "' doesn't exist"));
-        return this.stockMovementRepository.findAllByProduct(product).stream().map(
+        return this.stockMovementRepository.findAllByProductOrderByDate(product).stream().map(
                 (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
         ).collect(Collectors.toList());
     }
@@ -91,7 +92,7 @@ public class StockMovementService {
         ).collect(Collectors.toList());
     }
     public List<StockMovementProdDTO> getAllMovements() {
-        return this.stockMovementRepository.findAll().stream().map(
+        return this.stockMovementRepository.findAll(Sort.by("date")).stream().map(
                 (StockMovement s) -> new StockMovementProdDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),
                         s.getObservations(), s.getProduct().getName(), s.getProduct().getUnit().getName())
         ).collect(Collectors.toList());

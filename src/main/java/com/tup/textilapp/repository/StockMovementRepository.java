@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface StockMovementRepository extends JpaRepository<StockMovement,Integer> {
-    List<StockMovement> findAllByProduct(Product product);
+    List<StockMovement> findAllByProductOrderByDate(Product product);
     List<StockMovement> findByDateBetweenAndProduct(Date startDate, Date endDate, Product product);
 
 }

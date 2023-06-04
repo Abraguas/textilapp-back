@@ -111,11 +111,6 @@ public class UserService implements UserDetailsService {
             }
             user.setUsername(newUser.getUsername());
         }
-        if (newUser.getPassword() != null
-                && !newUser.getPassword().equals(user.getPassword())
-                && newUser.getPassword().length() > 0) {
-            user.setPassword(newUser.getPassword());
-        }
         if (newUser.getName() != null
                 && !newUser.getName().equals(user.getName())
                 && newUser.getName().length() > 0) {

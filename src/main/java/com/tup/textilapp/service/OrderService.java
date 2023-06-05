@@ -3,7 +3,6 @@ package com.tup.textilapp.service;
 import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final JwtService jwtService;
 
-    @Autowired
+
     public OrderService(
             OrderRepository orderRepository,
             OrderDetailRepository orderDetailRepository,

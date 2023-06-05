@@ -3,7 +3,7 @@ package com.tup.textilapp.controller;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.StockMovement;
 import com.tup.textilapp.service.StockMovementService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,6 @@ import java.util.List;
 public class StockMovementController {
     private final StockMovementService stockMovementService;
 
-    @Autowired
     public StockMovementController (StockMovementService stockMovementService) {
         this.stockMovementService = stockMovementService;
     }

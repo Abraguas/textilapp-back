@@ -7,7 +7,6 @@ import com.tup.textilapp.model.entity.SubCategory;
 import com.tup.textilapp.repository.CategoryRepository;
 import com.tup.textilapp.repository.ProductRepository;
 import com.tup.textilapp.repository.SubCategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,6 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
-    @Autowired
     public CategoryService(
             SubCategoryRepository subCategoryRepository,
             CategoryRepository categoryRepository, ProductRepository productRepository) {

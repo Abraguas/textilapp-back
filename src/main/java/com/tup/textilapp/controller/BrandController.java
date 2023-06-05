@@ -3,7 +3,7 @@ package com.tup.textilapp.controller;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.Brand;
 import com.tup.textilapp.service.BrandService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +14,6 @@ import java.util.List;
 public class BrandController {
     private final BrandService brandService;
 
-    @Autowired
     public BrandController (BrandService brandService) {
         this.brandService = brandService;
     }

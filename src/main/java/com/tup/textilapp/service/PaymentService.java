@@ -9,7 +9,6 @@ import com.mercadopago.resources.preference.Preference;
 import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +34,6 @@ public class PaymentService {
     @Value("${site.url}")
     private String siteUrl;
 
-    @Autowired
     public PaymentService(OrderRepository orderRepository, UserRepository userRepository, IJwtService jwtService,
                           OrderStateRepository orderStateRepository, PaymentRepository paymentRepository,
                           PaymentMethodRepository paymentMethodRepository) {

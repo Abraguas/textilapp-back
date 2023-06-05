@@ -2,7 +2,7 @@ package com.tup.textilapp.controller;
 
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.OrderStateService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderStateController {
     private final OrderStateService orderStateService;
 
-    @Autowired
     public OrderStateController(OrderStateService orderStateService) {
         this.orderStateService = orderStateService;
     }

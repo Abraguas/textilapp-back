@@ -5,7 +5,7 @@ import com.tup.textilapp.model.dto.RegisterPaymentDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,6 @@ import java.util.Date;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @Autowired
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }

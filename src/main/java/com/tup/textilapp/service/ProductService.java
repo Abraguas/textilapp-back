@@ -2,7 +2,6 @@ package com.tup.textilapp.service;
 
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ public class ProductService {
     private final SubCategoryRepository subCategoryRepository;
     private final ColorRepository colorRepository;
 
-    @Autowired
     public ProductService(
             ProductRepository productRepository,
             BrandRepository brandRepository,

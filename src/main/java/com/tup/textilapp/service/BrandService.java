@@ -3,7 +3,6 @@ package com.tup.textilapp.service;
 import com.tup.textilapp.model.entity.Brand;
 import com.tup.textilapp.repository.BrandRepository;
 import com.tup.textilapp.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ public class BrandService {
     private final BrandRepository brandRepository;
     private final ProductRepository productRepository;
 
-    @Autowired
     public BrandService(BrandRepository brandRepository, ProductRepository productRepository) {
         this.brandRepository = brandRepository;
         this.productRepository = productRepository;

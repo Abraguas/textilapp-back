@@ -7,7 +7,6 @@ import com.tup.textilapp.model.entity.UserEntity;
 import com.tup.textilapp.repository.RoleRepository;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -28,7 +27,6 @@ public class UserService implements UserDetailsService {
     private final JwtService jwtService;
     private final RoleRepository roleRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository, JwtService jwtService, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;

@@ -5,7 +5,7 @@ import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.Category;
 import com.tup.textilapp.model.entity.SubCategory;
 import com.tup.textilapp.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,6 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @Autowired
     public CategoryController( CategoryService categoryService ) { this.categoryService = categoryService; }
 
     @GetMapping

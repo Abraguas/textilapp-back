@@ -8,7 +8,6 @@ import com.tup.textilapp.model.entity.StockMovement;
 import com.tup.textilapp.repository.OrderDetailRepository;
 import com.tup.textilapp.repository.ProductRepository;
 import com.tup.textilapp.repository.StockMovementRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ public class StockMovementService {
     private final ProductRepository productRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-    @Autowired
     public StockMovementService(StockMovementRepository stockMovementRepository, ProductRepository productRepository,
                                 OrderDetailRepository orderDetailRepository) {
         this.stockMovementRepository = stockMovementRepository;

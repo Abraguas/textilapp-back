@@ -61,13 +61,17 @@ public class PaymentController {
     @GetMapping
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer pageNum,
-            @RequestParam(required = false) Integer pageSize
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) String searchString
     ) {
         try {
-            if (pageNum == null || pageSize == null) {
-                return ResponseEntity.ok(paymentService.getAll());
+            if ((pageNum == null || pageSize == null) && (searchString == null || searchString.length() < 1)) {
+                return ResponseEntity.ok(this.paymentService.getAll());
             }
-            return ResponseEntity.ok(paymentService.getAllByPageAndSize(pageNum,pageSize));
+            if (!(pageNum == null || pageSize == null) && (searchString == null || searchString.length() < 1)) {
+                return ResponseEntity.ok(this.paymentService.getAllByPageAndSize(pageNum,pageSize));
+            }
+            return ResponseEntity.ok(this.paymentService.getByUsernameAndPageAndSize(pageNum,pageSize,searchString));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
         } catch (IllegalStateException e) {

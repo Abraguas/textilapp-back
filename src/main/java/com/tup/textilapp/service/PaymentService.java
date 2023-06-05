@@ -125,6 +125,11 @@ public class PaymentService {
         Page<PaymentEntity> page = this.paymentRepository.findAll(p);
         return mapPaymentsToPaginatedResponse(page);
     }
+    public PaginatedResponseDTO getByUsernameAndPageAndSize(Integer pageNum, Integer size, String infix) {
+        Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
+        Page<PaymentEntity> page = this.paymentRepository.findByOrder_UserEntity_UsernameContainingIgnoreCase(infix,p);
+        return mapPaymentsToPaginatedResponse(page);
+    }
     private PaginatedResponseDTO mapPaymentsToPaginatedResponse(Page<PaymentEntity> page) {
         return new PaginatedResponseDTO(
                 page.getContent().stream().map(p ->

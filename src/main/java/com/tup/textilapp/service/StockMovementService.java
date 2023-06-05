@@ -8,6 +8,7 @@ import com.tup.textilapp.model.entity.StockMovement;
 import com.tup.textilapp.repository.OrderDetailRepository;
 import com.tup.textilapp.repository.ProductRepository;
 import com.tup.textilapp.repository.StockMovementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class StockMovementService {
     @Transactional
     public void register(StockMovement stockMovement) {
         Product product = this.productRepository.findById(stockMovement.getProduct().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: '" +
                         stockMovement.getProduct().getId() + "' doesn't exist"));
         Integer newStockValue = product.getStock() + stockMovement.getQuantity();
         if(newStockValue < 0) {
@@ -51,7 +52,7 @@ public class StockMovementService {
     }
     public Integer getStockByProduct(Integer productId) {
         Product product = this.productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: '" +
                         productId + "' doesn't exist"));
         List<StockMovement> mvLst = this.stockMovementRepository.findAllByProductOrderByDate(product);
         Integer result = 0;
@@ -69,7 +70,7 @@ public class StockMovementService {
 
     public List<StockMovementDTO> getMovementsByProduct(Integer productId) {
         Product product = this.productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: '" +
                         productId + "' doesn't exist"));
         return this.stockMovementRepository.findAllByProductOrderByDate(product).stream().map(
                 (StockMovement s) -> new StockMovementDTO(s.getId(),s.getQuantity(),s.getPriorStock(),s.getDate(),s.getObservations())
@@ -77,7 +78,7 @@ public class StockMovementService {
     }
     public List<StockMovementDTO> getMovementsByProductAndPeriod(Integer productId, Date startDate, Date endDate) {
         Product product = this.productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product with id: '" +
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: '" +
                         productId + "' doesn't exist"));
         if (startDate.compareTo(endDate) > 0) {
             throw new IllegalStateException("Start date cannot be more recent than end date");

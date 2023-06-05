@@ -17,78 +17,60 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryController( CategoryService categoryService ) { this.categoryService = categoryService; }
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping
     public List<CategoryDTO> getAll() {
         return this.categoryService.getAll();
     }
+
     @PostMapping
     public ResponseEntity<?> saveCategory(@RequestBody Category category) {
-        try {
-            this.categoryService.saveCategory(category);
-            return ResponseEntity.ok(new ResponseMessageDTO("Registered Category succesfully"));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.saveCategory(category);
+        return ResponseEntity.ok(new ResponseMessageDTO("Registered Category succesfully"));
+
     }
+
     @PostMapping(path = "subCategory")
     public ResponseEntity<?> saveSubCategory(@RequestBody SubCategory subCategory) {
-        try {
-            this.categoryService.saveSubcategory(subCategory);
-            return ResponseEntity.ok(new ResponseMessageDTO("Registered SubCategory succesfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.saveSubcategory(subCategory);
+        return ResponseEntity.ok(new ResponseMessageDTO("Registered SubCategory succesfully"));
+
     }
+
     @DeleteMapping(path = "{categoryId}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer categoryId) {
-        try {
-            this.categoryService.deleteCategory(categoryId);
-            return ResponseEntity.ok(new ResponseMessageDTO("Category deleted succesfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.deleteCategory(categoryId);
+        return ResponseEntity.ok(new ResponseMessageDTO("Category deleted succesfully"));
+
     }
+
     @DeleteMapping(path = "subCategory/{subCategoryId}")
     public ResponseEntity<?> deleteSubCategory(@PathVariable Integer subCategoryId) {
-        try {
-            this.categoryService.deleteSubcategory(subCategoryId);
-            return ResponseEntity.ok(new ResponseMessageDTO("Subcategory deleted succesfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(new ResponseMessageDTO(e.getMessage()));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.deleteSubcategory(subCategoryId);
+        return ResponseEntity.ok(new ResponseMessageDTO("Subcategory deleted succesfully"));
+
     }
+
     @PutMapping(path = "{categoryId}")
     public ResponseEntity<?> updateCategory(@PathVariable Integer categoryId, @RequestBody Category category) {
-        try {
-            this.categoryService.updateCategory(category, categoryId);
-            return ResponseEntity.ok(new ResponseMessageDTO("Category updated succesfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.updateCategory(category, categoryId);
+        return ResponseEntity.ok(new ResponseMessageDTO("Category updated succesfully"));
+
     }
+
     @PutMapping(path = "subCategory/{subCategoryId}")
     public ResponseEntity<?> updateSubCategory(@PathVariable Integer subCategoryId, @RequestBody SubCategory subCategory) {
-        try {
-            this.categoryService.updateSubCategory(subCategory, subCategoryId);
-            return ResponseEntity.ok(new ResponseMessageDTO("SubCategory updated succesfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ResponseMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+
+        this.categoryService.updateSubCategory(subCategory, subCategoryId);
+        return ResponseEntity.ok(new ResponseMessageDTO("SubCategory updated succesfully"));
+
     }
 }

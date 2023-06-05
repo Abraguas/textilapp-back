@@ -1,6 +1,5 @@
 package com.tup.textilapp.controller;
 
-import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.OrderStateService;
 
 import org.springframework.http.ResponseEntity;
@@ -19,10 +18,6 @@ public class OrderStateController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        try {
-            return ResponseEntity.ok(this.orderStateService.getAll());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
+        return ResponseEntity.ok(this.orderStateService.getAll());
     }
 }

@@ -7,6 +7,7 @@ import com.tup.textilapp.model.entity.SubCategory;
 import com.tup.textilapp.repository.CategoryRepository;
 import com.tup.textilapp.repository.ProductRepository;
 import com.tup.textilapp.repository.SubCategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,14 +61,14 @@ public class CategoryService {
 
     public void saveSubcategory(SubCategory subCategory) {
         Category category = this.categoryRepository.findById(subCategory.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Category doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Category doesn't exist"));
         subCategory.setCategory(category);
         this.subCategoryRepository.save(subCategory);
     }
 
     public void deleteSubcategory(Integer subCategoryId) {
         this.subCategoryRepository.findById(subCategoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Subcategory with specified id doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Subcategory with specified id doesn't exist"));
         if (this.productRepository.existsAllBySubCategory_Id(subCategoryId)) {
             throw new IllegalStateException("There's already products in this subcategory");
         }
@@ -76,7 +77,7 @@ public class CategoryService {
 
     public void deleteCategory(Integer categoryId) {
         this.categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category with specified id doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Category with specified id doesn't exist"));
         if (this.subCategoryRepository.existsAllByCategory_Id(categoryId)) {
             throw new IllegalStateException("Cannot delete a category that contains subcategories");
         }
@@ -86,7 +87,7 @@ public class CategoryService {
     @Transactional
     public void updateCategory(Category newCat, Integer categoryId) {
         Category category = this.categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category with specified id doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Category with specified id doesn't exist"));
         if (newCat.getName() != null
                 && !newCat.getName().equals(category.getName())
                 && newCat.getName().length() > 0) {
@@ -97,7 +98,7 @@ public class CategoryService {
     @Transactional
     public void updateSubCategory(SubCategory newSubCat, Integer subCategoryId) {
         SubCategory subCategory = this.subCategoryRepository.findById(subCategoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Subcategory with specified id doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Subcategory with specified id doesn't exist"));
         if (newSubCat.getName() != null
                 && !newSubCat.getName().equals(subCategory.getName())
                 && newSubCat.getName().length() > 0) {

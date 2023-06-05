@@ -1,6 +1,5 @@
 package com.tup.textilapp.controller;
 
-import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.service.PaymentMethodService;
 
 import org.springframework.http.ResponseEntity;
@@ -18,10 +17,6 @@ public class PaymentMethodController {
     }
     @GetMapping
     public ResponseEntity<?> getAll() {
-        try {
             return ResponseEntity.ok(this.paymentMethodService.getAll());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
-        }
     }
 }

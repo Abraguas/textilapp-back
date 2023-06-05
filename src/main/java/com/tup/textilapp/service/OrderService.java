@@ -3,6 +3,8 @@ package com.tup.textilapp.service;
 import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +50,7 @@ public class OrderService {
             throw new IllegalArgumentException("No details provided");
         }
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         OrderState state = this.orderStateRepository.findByName("Pendiente");
         Order newOrder = new Order(
                 null,
@@ -62,7 +63,7 @@ public class OrderService {
         Order rOrder = this.orderRepository.save(newOrder);
         for (OrderDetailDTO d : orderDTO.getDetails()) {
             Product product = this.productRepository.findById(d.getProduct().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Specified product doesn't exist"));
             if (d.getQuantity() > product.getStock()) {
                 throw new IllegalStateException("Not enough '" + product.getName() + "' in stock");
             }
@@ -106,7 +107,8 @@ public class OrderService {
         return mapOrdersToPaginatedResponse(page);
     }
     public GetOrderDTO getById(Integer orderId) {
-        Order o = this.orderRepository.findById(orderId).orElseThrow(()->new IllegalStateException(""));
+        Order o = this.orderRepository.findById(orderId)
+                .orElseThrow(()->new EntityNotFoundException("Specified order doesn't exist"));
         return new GetOrderDTO(
                 o.getId(),
                 o.getUserEntity().getUsername(),
@@ -122,7 +124,7 @@ public class OrderService {
     }
     public List<GetOrderDTO> getAllByToken(String token) {
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
 
         return this.orderRepository.findAllByUserEntity(user).stream().map((Order o) -> new GetOrderDTO(
                 o.getId(),
@@ -139,7 +141,7 @@ public class OrderService {
     }
     public PaginatedResponseDTO getAllByTokenAndPageAndSize(String token, Integer pageNum, Integer size) {
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         Pageable p = PageRequest.of(pageNum, size, Sort.by(Sort.Direction.DESC, "date"));
         return mapOrdersToPaginatedResponse(orderRepository.findAllByUserEntity(user, p));
     }
@@ -204,9 +206,9 @@ public class OrderService {
     @Transactional
     public void changeState(Integer orderId,OrderState s) {
         OrderState state = this.orderStateRepository.findById(s.getId())
-                .orElseThrow(()-> new IllegalArgumentException("State with id: '" + s.getId() + "' doesn't exist"));
+                .orElseThrow(()-> new EntityNotFoundException("State with id: '" + s.getId() + "' doesn't exist"));
         Order order = this.orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Order with id: '" + orderId + "' doesn't exist"));
         if (state.getName().equals("Cancelado")) {
             throw new IllegalStateException("You cannot cancel an order using this endpoint");
         }
@@ -220,10 +222,10 @@ public class OrderService {
     @Transactional
     public void cancelOrder(Integer orderId, String token) throws AccessDeniedException {
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         OrderState state = this.orderStateRepository.findByName("Cancelado");
         Order order = this.orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Order with id: '" + orderId + "' doesn't exist"));
         if (!user.equals(order.getUserEntity()) && !user.getRole().getName().equals("ADMIN")) {
             throw new AccessDeniedException("Users with a client role can only cancel their own orders");
         }

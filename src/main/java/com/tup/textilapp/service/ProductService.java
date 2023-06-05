@@ -2,6 +2,7 @@ package com.tup.textilapp.service;
 
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,16 +34,16 @@ public class ProductService {
 
     public void save(Product product) throws IllegalArgumentException {
         Brand brand = this.brandRepository.findById(product.getBrand().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Specified brand doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified brand doesn't exist"));
 
         Color color = this.colorRepository.findById(product.getColor().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Specified color doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified color doesn't exist"));
 
         Unit unit = this.unitRepository.findById(product.getUnit().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Specified unit doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified unit doesn't exist"));
 
         SubCategory subCategory = this.subCategoryRepository.findById(product.getSubCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Specified subCategory doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified subCategory doesn't exist"));
 
         Product newProduct = new Product(
                 null,
@@ -66,30 +67,30 @@ public class ProductService {
     public void update(Integer id, Product newProduct) throws IllegalArgumentException {
 
         Product product = this.productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified product doesn't exist"));
 
         if (newProduct.getBrand() != null
                 && !Objects.equals(newProduct.getBrand().getId(), product.getBrand().getId())) {
             Brand brand = this.brandRepository.findById(newProduct.getBrand().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specified brand doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Specified brand doesn't exist"));
             product.setBrand(brand);
         }
         if (newProduct.getColor() != null
                 && !Objects.equals(newProduct.getColor().getId(), product.getColor().getId())) {
             Color color = this.colorRepository.findById(newProduct.getColor().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specified color doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Specified color doesn't exist"));
             product.setColor(color);
         }
         if (newProduct.getUnit() != null
                 && !Objects.equals(newProduct.getUnit().getId(), product.getUnit().getId())) {
             Unit unit = this.unitRepository.findById(newProduct.getUnit().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specified unit doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Specified unit doesn't exist"));
             product.setUnit(unit);
         }
         if (newProduct.getSubCategory() != null
                 && !Objects.equals(newProduct.getSubCategory().getId(), product.getSubCategory().getId())) {
             SubCategory subCategory = this.subCategoryRepository.findById(newProduct.getSubCategory().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Specified subCategory doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Specified subCategory doesn't exist"));
             product.setSubCategory(subCategory);
         }
         if (newProduct.getName() != null
@@ -138,7 +139,7 @@ public class ProductService {
     public void unlist(Integer id) throws IllegalArgumentException {
 
         Product product = this.productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified product doesn't exist"));
         product.setIsListed(false);
 
     }
@@ -146,7 +147,7 @@ public class ProductService {
     public void list(Integer id) throws IllegalArgumentException {
 
         Product product = this.productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Specified product doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified product doesn't exist"));
         product.setIsListed(true);
 
     }
@@ -159,20 +160,20 @@ public class ProductService {
     }
     public Product getById(Integer productId) {
         return this.productRepository.findById(productId)
-                .orElseThrow(()-> new IllegalArgumentException("Product with id " + productId + " doesn't exist"));
+                .orElseThrow(()-> new EntityNotFoundException("Product with id " + productId + " doesn't exist"));
     }
     public List<Product> getListed() {
         return this.productRepository.findAllByIsListed(true);
     }
     public List<Product> getListedBySubCategory(Integer id) {
         SubCategory subCategory = this.subCategoryRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Specified subCategory doesn't exist"));
+                .orElseThrow(() ->new EntityNotFoundException("Specified subCategory doesn't exist"));
 
         return this.productRepository.findAllByIsListedAndSubCategory(true,subCategory);
     }
     public List<Product> getAllBySubCategory(Integer id) {
         SubCategory subCategory = this.subCategoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Specified subCategory doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Specified subCategory doesn't exist"));
 
         return this.productRepository.findAllBySubCategory(subCategory);
     }

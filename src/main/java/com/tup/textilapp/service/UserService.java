@@ -6,6 +6,7 @@ import com.tup.textilapp.model.entity.Role;
 import com.tup.textilapp.model.entity.UserEntity;
 import com.tup.textilapp.repository.RoleRepository;
 import io.jsonwebtoken.MalformedJwtException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,7 +38,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username){
         log.info("Consultara username " + username + " en base de datos");
         UserEntity userEntity = userRepository.findByUsername(username)
-                .orElseThrow(()-> new IllegalArgumentException("User doesn't exist"));
+                .orElseThrow(()-> new EntityNotFoundException("User doesn't exist"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(userEntity.getRole().getName()));
@@ -82,7 +83,7 @@ public class UserService implements UserDetailsService {
     public UserEntity getUserByToken(String token) throws MalformedJwtException {
         String username = this.jwtService.extractClaimUsername(token);
         return this.userRepository.findByUsername(username)
-                .orElseThrow(()-> new IllegalArgumentException("User doesn't exist"));
+                .orElseThrow(()-> new EntityNotFoundException("User doesn't exist"));
     }
 
     public void registerClient(UserEntity user) {
@@ -100,7 +101,7 @@ public class UserService implements UserDetailsService {
     public void updateUser(String token, UserEntity newUser) {
         String username = this.jwtService.extractClaimUsername(token);
         UserEntity user = this.userRepository.findByUsername(username)
-                .orElseThrow(()-> new IllegalArgumentException("User doesn't exist"));
+                .orElseThrow(()-> new EntityNotFoundException("User doesn't exist"));
         if (newUser.getUsername() != null
                 && !newUser.getUsername().equals(user.getUsername())
                 && newUser.getUsername().length() > 0) {

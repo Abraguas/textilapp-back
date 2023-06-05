@@ -6,9 +6,11 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
+import com.tup.textilapp.exception.custom.MPApiRuntimeException;
 import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,9 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,18 +48,18 @@ public class PaymentService {
     }
 
 
-    public Preference createByOrder(Integer orderId, String token) throws AccessDeniedException, MPException, MPApiException {
+    public Preference createByOrder(Integer orderId, String token){
         UserEntity user = this.userRepository.findByUsername(this.jwtService.extractUserName(token))
-                .orElseThrow(() -> new IllegalArgumentException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("User: '" + this.jwtService.extractUserName(token) + "' doesn't exist"));
         Order order = this.orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + orderId + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Order with id: '" + orderId + "' doesn't exist"));
         if (!user.equals(order.getUserEntity()) && !user.getRole().getName().equals("ADMIN")) {
             throw new AccessDeniedException("Users with a client role can only pay their own orders");
         }
         return this.createPreference(order);
     }
 
-    public Preference createPreference(Order order) throws MPException, MPApiException {
+    public Preference createPreference(Order order){
         PreferenceClient client = new PreferenceClient();
         List<PreferenceItemRequest> items = new ArrayList<>();
         for (OrderDetail d : order.getDetails()) {
@@ -93,7 +95,13 @@ public class PaymentService {
                 .statementDescriptor("TextilApp")
                 .externalReference(order.getId().toString())
                 .build();
-        return client.create(request);
+        try {
+            return client.create(request);
+        } catch (MPApiException e) {
+            throw new MPApiRuntimeException(e.getStatusCode(), e.getApiResponse().getContent());
+        } catch (MPException e) {
+            throw new RuntimeException(e.getMessage());
+        }
 
 
     }
@@ -151,12 +159,19 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentApprovedDTO validatePayment(Long paymentId) throws MPException, MPApiException {
+    public PaymentApprovedDTO validatePayment(Long paymentId) {
         PaymentClient client = new PaymentClient();
-        Payment p = client.get(paymentId);
+        Payment p;
+        try {
+            p = client.get(paymentId);
+        } catch (MPApiException e) {
+            throw new MPApiRuntimeException(e.getStatusCode(), e.getApiResponse().getContent());
+        } catch (MPException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         if (p.getStatus().equals("approved")) {
             Order order = this.orderRepository.findById(Integer.parseInt(p.getExternalReference()))
-                    .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + p.getExternalReference() + "' doesn't exist"));
+                    .orElseThrow(() -> new EntityNotFoundException("Order with id: '" + p.getExternalReference() + "' doesn't exist"));
             OrderState state = this.orderStateRepository.findByName("Cobrado");
             if (order.getState().equals(state)) {
                 throw new IllegalStateException("The order was already payed");
@@ -184,14 +199,14 @@ public class PaymentService {
     public void registerPayment(RegisterPaymentDTO body) {
 
         Order order = this.orderRepository.findById(body.getOrderId())
-                .orElseThrow(() -> new IllegalArgumentException("Order with id: '" + body.getOrderId() + "' doesn't exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Order with id: '" + body.getOrderId() + "' doesn't exist"));
         OrderState state = this.orderStateRepository.findByName("Cobrado");
         if (order.getState().equals(state)) {
             throw new IllegalStateException("The order was already payed");
         }
         order.setState(state);
         PaymentMethod pm = this.paymentMethodRepository.findById(body.getPaymentMethod().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Provided payment method does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Provided payment method does not exist"));
         this.paymentRepository.save(new PaymentEntity(
                 null,
                 new Date(),

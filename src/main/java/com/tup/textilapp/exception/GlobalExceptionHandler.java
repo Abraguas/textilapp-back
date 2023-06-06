@@ -1,6 +1,7 @@
 package com.tup.textilapp.exception;
 
 import com.mercadopago.exceptions.MPException;
+import com.tup.textilapp.exception.custom.InsufficientStockException;
 import com.tup.textilapp.exception.custom.MPApiRuntimeException;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import io.jsonwebtoken.MalformedJwtException;
@@ -47,9 +48,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         return ResponseEntity.status(401).body(new ResponseMessageDTO(e.getMessage()));
     }
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<?> handleInsufficientStockException(InsufficientStockException e) {
+        return ResponseEntity.status(422).body(new ResponseMessageDTO(e.getMessage()));
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        System.out.println(e.toString());
         return ResponseEntity.internalServerError().body(new ResponseMessageDTO(e.getMessage()));
     }
 

@@ -1,5 +1,6 @@
 package com.tup.textilapp.service;
 
+import com.tup.textilapp.exception.custom.InsufficientStockException;
 import com.tup.textilapp.model.dto.*;
 import com.tup.textilapp.model.entity.*;
 import com.tup.textilapp.repository.*;
@@ -65,7 +66,7 @@ public class OrderService {
             Product product = this.productRepository.findById(d.getProduct().getId())
                     .orElseThrow(() -> new EntityNotFoundException("Specified product doesn't exist"));
             if (d.getQuantity() > product.getStock()) {
-                throw new IllegalStateException("Not enough '" + product.getName() + "' in stock");
+                throw new InsufficientStockException("Not enough '" + product.getName() + "' in stock");
             }
             product.setStock(product.getStock() - d.getQuantity());
             this.orderDetailRepository.save(

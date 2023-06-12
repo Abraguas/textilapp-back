@@ -1,5 +1,6 @@
 package com.tup.textilapp.service;
 
+import com.tup.textilapp.model.dto.ChangePasswordDTO;
 import com.tup.textilapp.model.dto.GetUserDTO;
 import com.tup.textilapp.model.dto.UserRankingDTO;
 import com.tup.textilapp.model.entity.Role;
@@ -8,6 +9,7 @@ import com.tup.textilapp.repository.RoleRepository;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -133,5 +135,24 @@ public class UserService implements UserDetailsService {
                 && newUser.getPhonenumber().length() > 0) {
             user.setPhonenumber(newUser.getPhonenumber());
         }
+    }
+    @Transactional
+    public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
+        String username = this.jwtService.extractClaimUsername(token);
+        UserEntity user = this.userRepository.findByUsername(username)
+                .orElseThrow(()-> new EntityNotFoundException("User doesn't exist"));
+        if (!changePasswordDTO.getOldPassword().equals(user.getPassword())) {
+            throw new BadCredentialsException("Incorrect password");
+        }
+        if (!changePasswordDTO.getNewPassword().equals(user.getPassword())) {
+            throw new IllegalArgumentException("New password cannot be same as old one");
+        }
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getRepeatPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+        if (changePasswordDTO.getNewPassword().length() < 1) {
+            throw new IllegalArgumentException("Password cannot be an empty string");
+        }
+        user.setPassword(changePasswordDTO.getNewPassword());
     }
 }

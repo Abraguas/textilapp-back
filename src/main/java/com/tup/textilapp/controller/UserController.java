@@ -1,5 +1,6 @@
 package com.tup.textilapp.controller;
 
+import com.tup.textilapp.model.dto.ChangePasswordDTO;
 import com.tup.textilapp.model.dto.JwtDTO;
 import com.tup.textilapp.model.dto.ResponseMessageDTO;
 import com.tup.textilapp.model.entity.UserEntity;
@@ -63,5 +64,11 @@ public class UserController {
             String token = request.getHeader("Authorization").substring(7);
             this.userService.updateUser(token, user);
             return ResponseEntity.ok(new ResponseMessageDTO("User updated succesfully"));
+    }
+    @PutMapping(path = "/self/passwordReset")
+    public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody ChangePasswordDTO changePasswordDTO) {
+        String token = request.getHeader("Authorization").substring(7);
+        this.userService.changePassword(token, changePasswordDTO);
+        return ResponseEntity.ok(new ResponseMessageDTO("Password updated succesfully"));
     }
 }

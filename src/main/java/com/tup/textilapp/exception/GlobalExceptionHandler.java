@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.security.access.AccessDeniedException;
@@ -46,6 +47,10 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
+        return ResponseEntity.status(401).body(new ResponseMessageDTO(e.getMessage()));
+    }
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException e) {
         return ResponseEntity.status(401).body(new ResponseMessageDTO(e.getMessage()));
     }
     @ExceptionHandler(InsufficientStockException.class)

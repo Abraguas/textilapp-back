@@ -47,8 +47,8 @@ public class CategoryConfig implements CommandLineRunner {
         List<SubCategory> subList = new ArrayList<>();
         Category bed = catRepository.findByName("Cama");
         subList.add(new SubCategory(null,"Almohadas", bed));
-        subList.add(new SubCategory(null,"Sabanas", bed));
-        subList.add(new SubCategory(null,"Fundas", bed));
+        subList.add(new SubCategory(null,"Juegos de sabanas", bed));
+        subList.add(new SubCategory(null,"Acolchados", bed));
 
         Category bath = catRepository.findByName("Baños");
         subList.add(new SubCategory(null,"Cortinas de baño", bath));
@@ -57,18 +57,19 @@ public class CategoryConfig implements CommandLineRunner {
 
         Category kit = catRepository.findByName("Cocina");
         subList.add(new SubCategory(null,"Repasadores", kit));
-        subList.add(new SubCategory(null,"Sabanas", kit));
-        subList.add(new SubCategory(null,"Fundas", kit));
+        subList.add(new SubCategory(null,"Manteles", kit));
+        subList.add(new SubCategory(null,"Cortinas de cocina", kit));
 
         Category dec = catRepository.findByName("Deco");
         subList.add(new SubCategory(null,"Alfombras", dec));
         subList.add(new SubCategory(null,"Cortinas", dec));
-        subList.add(new SubCategory(null,"Almohadones", dec));
+        subList.add(new SubCategory(null,"Fundas y Almohadones", dec));
 
         Category clo = catRepository.findByName("Telas");
         subList.add(new SubCategory(null,"Friselina", clo));
         subList.add(new SubCategory(null,"Jean", clo));
         subList.add(new SubCategory(null,"Corderito", clo));
+        subList.add(new SubCategory(null,"Black out", clo));
         subCatRepository.saveAll(subList);
 
 

@@ -31,6 +31,7 @@ public class BrandConfig implements CommandLineRunner {
         list.add(new Brand(null, "Danubio"));
         list.add(new Brand(null, "Eliplast"));
         list.add(new Brand(null, "Piñata"));
+        list.add(new Brand(null, "TextilApp"));
         repository.saveAll(list);
 
     }

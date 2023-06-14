@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService {
         if (!changePasswordDTO.getOldPassword().equals(user.getPassword())) {
             throw new BadCredentialsException("Incorrect password");
         }
-        if (!changePasswordDTO.getNewPassword().equals(user.getPassword())) {
+        if (changePasswordDTO.getNewPassword().equals(user.getPassword())) {
             throw new IllegalArgumentException("New password cannot be same as old one");
         }
         if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getRepeatPassword())) {

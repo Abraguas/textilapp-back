@@ -16,7 +16,8 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer>
     @Query("SELECT NEW com.tup.textilapp.model.dto.TotalEarningsPerMonthDTO(YEAR(p.date), MONTH(p.date), SUM(p.ammountCharged)) " +
             "FROM PaymentEntity p " +
             "WHERE p.date BETWEEN ?1 AND ?2 " +
-            "GROUP BY YEAR(p.date), MONTH(p.date)")
+            "GROUP BY YEAR(p.date), MONTH(p.date) " +
+            "ORDER BY p.date ASC")
     List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth(Date startDate, Date endDate);
     Page<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCase(String infix, Pageable pageable);
 }

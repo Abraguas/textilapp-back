@@ -22,6 +22,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
             "WHERE o.date BETWEEN ?1 AND ?2 " +
             "AND s.name IN ('Cobrado', 'Entregado') " +
             "GROUP BY p.id " +
-            "ORDER BY SUM(od.quantity) DESC")
+            "ORDER BY SUM(od.quantity) DESC " +
+            "LIMIT 10")
     List<HighestSellingProductsDTO> highestSellingProducts(Date startDate, Date endDate);
 }

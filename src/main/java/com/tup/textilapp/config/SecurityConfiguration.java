@@ -90,6 +90,9 @@ public class SecurityConfiguration{
                         .requestMatchers("/stockMovement/all").hasAuthority("ADMIN")
                         .requestMatchers("/stockMovement/report").hasAuthority("ADMIN")
 
+                        .requestMatchers(HttpMethod.POST,"/image").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/image").hasAnyAuthority("ADMIN", "CLIENT")
+
                         .requestMatchers(HttpMethod.GET,"/user").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/user/ranking").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers("/user/client").permitAll()

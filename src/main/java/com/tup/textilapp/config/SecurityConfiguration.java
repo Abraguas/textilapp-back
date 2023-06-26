@@ -91,7 +91,7 @@ public class SecurityConfiguration{
                         .requestMatchers("/stockMovement/report").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.POST,"/image").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/image").hasAnyAuthority("ADMIN", "CLIENT")
+                        .requestMatchers(HttpMethod.GET,"/image/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET,"/user").hasAnyAuthority("ADMIN", "CLIENT")
                         .requestMatchers(HttpMethod.GET,"/user/ranking").hasAnyAuthority("ADMIN", "CLIENT")

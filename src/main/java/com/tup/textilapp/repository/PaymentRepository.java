@@ -20,4 +20,9 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer>
             "ORDER BY YEAR(p.date), MONTH(p.date) ASC")
     List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth(Date startDate, Date endDate);
     Page<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCase(String infix, Pageable pageable);
+    List<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCase(String infix);
+    List<PaymentEntity> findByDateBetween(Date startDate, Date endDate);
+    Page<PaymentEntity> findByDateBetween(Date startDate, Date endDate, Pageable pageable);
+    List<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCaseAndDateBetween(String infix, Date startDate, Date endDate);
+    Page<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCaseAndDateBetween(String infix, Date startDate, Date endDate, Pageable pageable);
 }

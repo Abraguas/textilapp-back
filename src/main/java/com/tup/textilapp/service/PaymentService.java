@@ -128,6 +128,62 @@ public class PaymentService {
             )
         ).toList();
     }
+    public List<PaymentDTO> getByUsername(String username) {
+        return this.paymentRepository.findByOrder_UserEntity_UsernameContainingIgnoreCase(username).stream().map(p ->
+                new PaymentDTO(
+                        p.getId(),
+                        p.getOrder().getUserEntity().getUsername(),
+                        p.getDate(),
+                        p.getObservations(),
+                        p.getAmmountCharged(),
+                        p.getTransactionNumber(),
+                        p.getOrder().getId(),
+                        p.getPaymentMethod()
+                )
+        ).toList();
+    }
+    public List<PaymentDTO> getByDateBetween(Date startDate, Date endDate) {
+        this.validateDates(startDate,endDate);
+        return this.paymentRepository.findByDateBetween(startDate, endDate).stream().map(p ->
+                new PaymentDTO(
+                        p.getId(),
+                        p.getOrder().getUserEntity().getUsername(),
+                        p.getDate(),
+                        p.getObservations(),
+                        p.getAmmountCharged(),
+                        p.getTransactionNumber(),
+                        p.getOrder().getId(),
+                        p.getPaymentMethod()
+                )
+        ).toList();
+    }
+    public List<PaymentDTO> getByUsernameAndDateBetween(String username,Date startDate, Date endDate) {
+        this.validateDates(startDate,endDate);
+        return this.paymentRepository.findByOrder_UserEntity_UsernameContainingIgnoreCaseAndDateBetween(username, startDate, endDate).stream().map(p ->
+                new PaymentDTO(
+                        p.getId(),
+                        p.getOrder().getUserEntity().getUsername(),
+                        p.getDate(),
+                        p.getObservations(),
+                        p.getAmmountCharged(),
+                        p.getTransactionNumber(),
+                        p.getOrder().getId(),
+                        p.getPaymentMethod()
+                )
+        ).toList();
+    }
+    public PaginatedResponseDTO getByPageAndSizeAndDateBetween(Integer pageNum, Integer pageSize, Date startDate, Date endDate) {
+        this.validateDates(startDate,endDate);
+        Pageable p = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "date"));
+        Page<PaymentEntity> page = this.paymentRepository.findByDateBetween(startDate, endDate, p);
+        return mapPaymentsToPaginatedResponse(page);
+    }
+    public PaginatedResponseDTO getByUsernameAndPageAndSizeAndDateBetween(Integer pageNum, Integer pageSize, String username ,Date startDate, Date endDate) {
+        this.validateDates(startDate,endDate);
+        Pageable p = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "date"));
+        Page<PaymentEntity> page = this.paymentRepository.findByOrder_UserEntity_UsernameContainingIgnoreCaseAndDateBetween(username, startDate, endDate, p);
+        return mapPaymentsToPaginatedResponse(page);
+    }
     public PaginatedResponseDTO getAllByPageAndSize(Integer pageNum, Integer pageSize) {
         Pageable p = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "date"));
         Page<PaymentEntity> page = this.paymentRepository.findAll(p);
@@ -157,7 +213,14 @@ public class PaymentService {
                 page.getTotalPages()
         );
     }
-
+    private void validateDates(Date startDate, Date endDate) {
+        if (startDate.compareTo(endDate) > 0) {
+            throw new IllegalStateException("Start date cannot be more recent than end date");
+        }
+        if (startDate.compareTo(endDate) == 0) {
+            throw new IllegalStateException("Start date cannot be the exact same as end date");
+        }
+    }
     @Transactional
     public PaymentApprovedDTO validatePayment(Long paymentId) {
         PaymentClient client = new PaymentClient();

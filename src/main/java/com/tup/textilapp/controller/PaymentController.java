@@ -44,16 +44,43 @@ public class PaymentController {
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer pageNum,
             @RequestParam(required = false) Integer pageSize,
-            @RequestParam(required = false) String searchString
+            @RequestParam(required = false) String searchString,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date endDate
     ) {
-        if ((pageNum == null || pageSize == null) && (searchString == null || searchString.length() < 1)) {
+        if ((pageNum == null || pageSize == null)
+                && (searchString == null || searchString.length() < 1)
+                && (startDate == null || endDate == null)) {
             return ResponseEntity.ok(this.paymentService.getAll());
         }
-        if (!(pageNum == null || pageSize == null) && (searchString == null || searchString.length() < 1)) {
+        if (!(pageNum == null || pageSize == null)
+                && (searchString == null || searchString.length() < 1)
+                && (startDate == null || endDate == null)) {
             return ResponseEntity.ok(this.paymentService.getAllByPageAndSize(pageNum, pageSize));
         }
-        return ResponseEntity.ok(this.paymentService.getByUsernameAndPageAndSize(pageNum, pageSize, searchString));
+        if (!(pageNum == null || pageSize == null)
+                && !(searchString == null || searchString.length() < 1)
+                && (startDate == null || endDate == null)) {
+            return ResponseEntity.ok(this.paymentService.getByUsernameAndPageAndSize(pageNum, pageSize, searchString));
+        }
+        if ((pageNum == null || pageSize == null)
+                && !(searchString == null || searchString.length() < 1)
+                && (startDate == null || endDate == null)) {
+            return ResponseEntity.ok(this.paymentService.getByUsername(searchString));
+        }
+        if (!(pageNum == null || pageSize == null)
+                && !(searchString == null || searchString.length() < 1)) {
+            return ResponseEntity.ok(this.paymentService.getByUsernameAndPageAndSizeAndDateBetween(pageNum, pageSize, searchString, startDate, endDate));
+        }
+        if (!(pageNum == null || pageSize == null)) {
+            return ResponseEntity.ok(this.paymentService.getByPageAndSizeAndDateBetween(pageNum, pageSize, startDate, endDate));
+        }
 
+        if ((searchString == null || searchString.length() < 1)) {
+
+            return ResponseEntity.ok(this.paymentService.getByDateBetween(startDate, endDate));
+        }
+        return ResponseEntity.ok(this.paymentService.getByUsernameAndDateBetween(searchString, startDate, endDate));
     }
 
     @GetMapping(path = "{paymentId}")

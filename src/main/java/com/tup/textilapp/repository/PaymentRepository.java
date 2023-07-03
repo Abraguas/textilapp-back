@@ -17,7 +17,7 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer>
             "FROM PaymentEntity p " +
             "WHERE p.date BETWEEN ?1 AND ?2 " +
             "GROUP BY YEAR(p.date), MONTH(p.date) " +
-            "ORDER BY p.date ASC")
+            "ORDER BY YEAR(p.date), MONTH(p.date) ASC")
     List<TotalEarningsPerMonthDTO> getTotalEarningsPerMonth(Date startDate, Date endDate);
     Page<PaymentEntity> findByOrder_UserEntity_UsernameContainingIgnoreCase(String infix, Pageable pageable);
 }
